@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-06 16:40:59
+ * @LastEditTime: 2020-07-07 00:38:41
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -12,12 +12,63 @@
  */
 class System {
     constructor(max_mem_size) {
-        this.memory = new Memory(max_mem_size);
-        this.jobs = new Array();
+        this.memory = new Memory(max_mem_size); // 系统内存
+        this.type = -1; // 动态存储分配算法
+        // this.jobs = new Array();  // 保存所有作业信息
+        this.wait_jobs = new Array(); // 等待运行作业队列
+        this.running_jobs = new Array(); // 运行中作业队列          
+        this.end_jobs = new Array(); // 等待结束作业队列
+        
+        this.time = 0; // 模拟cpu单位时间
     }
 
+    // 添加作业到作业队列
     add_job(job) {
-        this.jobs.push(job);
+        this.wait_jobs.push(job);
+    }
+
+    // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
+    run() {
+        this.time += 1;
+        this.finish_jobs();
+        this.begin_jobs();
+    }
+
+    // 处理完成的作业
+    finish_jobs() {
+        // 遍历寻找完成的作业
+        for (let i = 0; i < this.running_jobs.length; i++) {
+            let job = this.running_jobs[i];
+            if (job.end_time == this.time) {
+                // 处理作业队列
+                this.end_jobs.push(job);
+                this.running_jobs.splice(i, 1);
+            }
+        }
+        if (this.end_jobs.length != 0)
+            this.memory.unload_job(this.end_jobs);
+    }
+
+    // 处理等待执行的作业
+    begin_jobs() {
+        // 采用先进先出原则，要加载的永远是队列的第0号作业
+        if (this.wait_jobs.length == 0)
+            return;
+            
+        let job = this.wait_jobs[0];
+        if (job.in_time <= this.time) {
+            let part_num = 0; // find a part
+            if (part_num != -1) {
+                // 设置作业属性，开始运行
+                job.start_time = this.time;
+                job.end_time = job.start_time + job.run_time;
+
+                this.memory.load_job(0, job);
+                // 处理作业队列
+                this.running_jobs.push(job);
+                this.wait_jobs.splice(0, 1);
+            }
+        }
     }
 }
 
@@ -37,6 +88,11 @@ class Memory {
         this.max_order_number = 0; // 指向内存分区最大编号
     }
 
+    // allocation function
+    // find a part to load the job
+    // if can find, return the order num of the part
+    // else return -1
+    
     // 首次适应算法
     
     // 最佳适应算法
@@ -44,7 +100,7 @@ class Memory {
     // 最差适应算法
 
     // 添加作业到内存中
-    load_job(time, part_num, jobs, job_num) {
+    load_job(part_num, job) {
         // 将旧的分区拆开出新的分区
         let part = this.parts[part_num];
         let new_part = new Part(this.max_order_number + 1, part.size - job.size);
@@ -54,38 +110,28 @@ class Memory {
         part.size = job.size;
         part.job_num = job.order_number;
 
-        // 设置作业属性，开始运行
-        job.start_time = time;
-        job.end_time = job.start_time + job.run_time;
-
         this.used_size += job.size;
-        this.max_order_number += 2;
+        this.max_order_number += 1;
     }
 
     // 完成作业，释放内存资源
-    unload_job(time, jobs) {
+    unload_job(end_jobs) {
         // 遍历寻找完成的作业
-        for (let i = 0; i < this.parts.length; i++) {
-            let part = this.parts[i];
-            if (part.job_num == -1)
-                continue;
-            
-            let job = jobs[part.job_num];
-            let new_part;
-            if (job.end_time == time) {
-                // 判断前一个分区能否与其合并
-                if ((i > 0) && this.parts[i - 1].job_num == -1) {
-                    new_part = new Part(this.max_order_number + 1, part.size + this.parts[i - 1].size);
-                    this.parts.splice(i - 1, 2, new_part);
-                    i -= 1;
+        for (let i = this.parts.length-1; i >= 0; i--) {
+            for (let j = 0; j < end_jobs.length; j++)
+                if (this.parts[i].job_num == end_jobs[j].order_number) {
+                    // 考虑后一个分区能否与该分区合并
+                    if ((i < this.parts.length-1) && this.parts[i + 1].job_num == -1) {
+                        this.parts[i].size += this.parts[i + 1].size;
+                        this.parts.splice(i + 1, 1);
+                    }
+                    this.parts[i].job_num = -1;
+                    end_jobs.splice(j, 1);
+
+                    this.used_size -= job.size;
+
+                    break;
                 }
-                else
-                    this.max_order_number += 1;
-
-                this.parts[i].job_num = -1;
-
-                this.used_size -= job.size;
-            }
         }
     }
     // 输出信息，用于debug
@@ -116,6 +162,7 @@ class Part {
         console.log('order number:' + this.order_number);
         console.log('part size:' + this.size);
         console.log('job number:' + this.job_num);
+        console.log('\n')
     }
 }
 
@@ -123,10 +170,10 @@ class Part {
  * 作业的类
  */
 class Job {
-    constructor(order_number, size, run_time) {
+    constructor(order_number, size, in_time, run_time) {
         this.order_number = order_number; // 作业序号
         this.size = size; // 作业使用的内存大小
-        this.in_time = -1; // 作业进入内存时间
+        this.in_time = in_time; // 作业进入内存时间
         this.run_time = run_time; // 作业运行需要的时间
         this.start_time = -1; // 作业开始运行的时间
         this.end_time = -1; // 作业结束运行的时间
@@ -134,18 +181,24 @@ class Job {
 }
 
 console.log('--init')
-var system = new System(100 * 1024 * 1024);
-job = new Job(0, 10, 5);
+// set the system here
+// var system = new System(100 * 1024 * 1024);
+var system = new System(100);
+
+// add jobs here
+job = new Job(0, 10, 1, 4);
 system.add_job(job);
 
 system.memory.print();
 console.log('\n');
 
-console.log('--add job 0');
-system.memory.load_job(0, 0, system.jobs, 0);
-system.memory.print();
-
-console.log('--finish job 0')
-system.memory.unload_job(5, system.jobs);
-system.memory.print();
+// run the system here
+let round = 0;
+while(round <= 6) {
+    system.run();
+    console.log('--time = ' + system.time);
+    system.memory.print();
+    console.log('\n');
+    round += 1;
+}
 
