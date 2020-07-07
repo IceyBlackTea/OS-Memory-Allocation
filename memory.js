@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-07 00:38:41
+ * @LastEditTime: 2020-07-07 09:54:49
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -11,9 +11,9 @@
  * 系统的类
  */
 class System {
-    constructor(max_mem_size) {
+    constructor(max_mem_size, type) {
         this.memory = new Memory(max_mem_size); // 系统内存
-        this.type = -1; // 动态存储分配算法
+        this.type = type; // 动态存储分配算法
         // this.jobs = new Array();  // 保存所有作业信息
         this.wait_jobs = new Array(); // 等待运行作业队列
         this.running_jobs = new Array(); // 运行中作业队列          
@@ -57,13 +57,20 @@ class System {
             
         let job = this.wait_jobs[0];
         if (job.in_time <= this.time) {
-            let part_num = 0; // find a part
+            let part_num = -1;
+            if (this.type == 'FF')
+                part_num = this.memory.FF(job);
+            else if (this.type == 'BF')
+                part_num = this.memory.BF(job);
+            else if (this.type == 'WF')
+                part_num = this.memory.WF(job);
+            // console.log(part_num);
             if (part_num != -1) {
                 // 设置作业属性，开始运行
                 job.start_time = this.time;
                 job.end_time = job.start_time + job.run_time;
 
-                this.memory.load_job(0, job);
+                this.memory.load_job(part_num, job);
                 // 处理作业队列
                 this.running_jobs.push(job);
                 this.wait_jobs.splice(0, 1);
@@ -94,11 +101,47 @@ class Memory {
     // else return -1
     
     // 首次适应算法
-    
+    FF(job) {
+        for (let i = 0; i < this.parts.length; i++) {
+            if (this.parts[i].job_num == -1 && this.parts[i].size >= job.size)
+                return i;
+        }
+        return -1;
+    }
     // 最佳适应算法
+    BF(job) {
+        let size = job.size;
+        let best_size = 9999;
+        let part_num = -1;
+        for (let i = 0; i < this.parts.length; i++) {
+            let part = this.parts[i];
+            if (part.job_num == -1 && part.size >= size) {
+                if (part.size < best_size) {
+                    part_num = i;
+                    best_size = part.size
+                }
+            }
+        }
+        return part_num;
+    }
+    
 
     // 最差适应算法
-
+    WF(job) {
+        let size = job.size;
+        let worst_size = 0;
+        let part_num = -1;
+        for (let i = 0; i < this.parts.length; i++) {
+            let part = this.parts[i];
+            if (part.job_num == -1 && part.size >= size) {
+                if (part.size > worst_size) {
+                    part_num = i;
+                    worst_size = part.size
+                }
+            }
+        }
+        return part_num;
+    }
     // 添加作业到内存中
     load_job(part_num, job) {
         // 将旧的分区拆开出新的分区
@@ -120,18 +163,18 @@ class Memory {
         for (let i = this.parts.length-1; i >= 0; i--) {
             for (let j = 0; j < end_jobs.length; j++)
                 if (this.parts[i].job_num == end_jobs[j].order_number) {
-                    // 考虑后一个分区能否与该分区合并
-                    if ((i < this.parts.length-1) && this.parts[i + 1].job_num == -1) {
-                        this.parts[i].size += this.parts[i + 1].size;
-                        this.parts.splice(i + 1, 1);
-                    }
+                    this.used_size -= this.parts[i].size;
                     this.parts[i].job_num = -1;
                     end_jobs.splice(j, 1);
-
-                    this.used_size -= job.size;
-
                     break;
                 }
+                    
+            // 考虑后一个分区能否与该分区合并
+            if ((i < this.parts.length-1) && this.parts[i].job_num == -1 && this.parts[i + 1].job_num == -1) {
+                this.parts[i].size += this.parts[i + 1].size;
+                this.parts.splice(i + 1, 1);
+            }
+                    
         }
     }
     // 输出信息，用于debug
@@ -182,23 +225,27 @@ class Job {
 
 console.log('--init')
 // set the system here
-// var system = new System(100 * 1024 * 1024);
-var system = new System(100);
+// var system = new System(100 * 1024 * 1024, 'FF');
+var system = new System(100, 'FF');
 
 // add jobs here
-job = new Job(0, 10, 1, 4);
-system.add_job(job);
+job_0 = new Job(0, 10, 1, 4);
+job_1 = new Job(1, 20, 3, 6);
+job_2 = new Job(2, 30, 4, 1);
+system.add_job(job_0);
+system.add_job(job_1);
+system.add_job(job_2);
 
 system.memory.print();
 console.log('\n');
 
 // run the system here
+let rounds = 10;
 let round = 0;
-while(round <= 6) {
+while(round <= rounds) {
     system.run();
     console.log('--time = ' + system.time);
     system.memory.print();
     console.log('\n');
     round += 1;
 }
-
