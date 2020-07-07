@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-07 15:23:33
+ * @LastEditTime: 2020-07-07 16:33:31
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -19,7 +19,7 @@ class System {
         this.running_jobs = new Array(); // 运行中作业队列          
         this.end_jobs = new Array(); // 等待结束作业队列
         
-        this.time = 0; // 模拟cpu单位时间
+        this.time = -1; // 模拟cpu单位时间
     }
 
     // 添加作业到作业队列
@@ -28,10 +28,15 @@ class System {
     }
 
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
-    run() {
-        this.time += 1;
-        this.finish_jobs();
-        this.begin_jobs();
+    run(steps = 1) {
+        let step = 0;
+        while (step < steps) {
+            this.time += 1;
+            this.finish_jobs();
+            this.begin_jobs();
+            step += 1;
+        }
+        
     }
 
     // 处理完成的作业
@@ -184,6 +189,8 @@ class Memory {
                     
             // 考虑后一个分区能否与该分区合并
             if ((i < this.parts.length-1) && this.parts[i].job_num == -1 && this.parts[i + 1].job_num == -1) {
+                if (this.parts[i+1].order_number == this.max_order_number)
+                    this.max_order_numbe -= 1;
                 this.parts[i].size += this.parts[i + 1].size;
                 this.parts.splice(i + 1, 1);
             }
