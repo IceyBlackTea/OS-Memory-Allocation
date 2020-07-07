@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-07 09:54:49
+ * @LastEditTime: 2020-07-07 09:57:01
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -108,6 +108,7 @@ class Memory {
         }
         return -1;
     }
+
     // 最佳适应算法
     BF(job) {
         let size = job.size;
@@ -125,7 +126,6 @@ class Memory {
         return part_num;
     }
     
-
     // 最差适应算法
     WF(job) {
         let size = job.size;
