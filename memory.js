@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-07 09:57:01
+ * @LastEditTime: 2020-07-07 15:23:33
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -77,6 +77,16 @@ class System {
             }
         }
     }
+
+    // 输出信息，用于debug
+    print() {
+        console.log('system info');
+        console.log('system type: ' + this.type);
+        console.log('system time: ' + this.time);
+        console.log('\n');
+        
+        this.memory.print();
+    }
 }
 
 /*
@@ -146,9 +156,12 @@ class Memory {
     load_job(part_num, job) {
         // 将旧的分区拆开出新的分区
         let part = this.parts[part_num];
-        let new_part = new Part(this.max_order_number + 1, part.size - job.size);
-        this.parts.splice(part_num + 1, 0, new_part);
-
+        let new_part_size = part.size - job.size;
+        if (new_part_size != 0) {
+            let new_part = new Part(this.max_order_number + 1, part.size - job.size);
+            this.parts.splice(part_num + 1, 0, new_part);
+        }
+        
         // 旧分区装入作业
         part.size = job.size;
         part.job_num = job.order_number;
@@ -223,29 +236,32 @@ class Job {
     }
 }
 
-console.log('--init')
-// set the system here
-// var system = new System(100 * 1024 * 1024, 'FF');
-var system = new System(100, 'FF');
+function test() {
+    console.log('--init')
+    // set the system here
+    // var system = new System(100 * 1024 * 1024, 'FF');
+    var system = new System(100, 'FF');
 
-// add jobs here
-job_0 = new Job(0, 10, 1, 4);
-job_1 = new Job(1, 20, 3, 6);
-job_2 = new Job(2, 30, 4, 1);
-system.add_job(job_0);
-system.add_job(job_1);
-system.add_job(job_2);
+    // add jobs here
+    job_0 = new Job(0, 10, 1, 4);
+    job_1 = new Job(1, 20, 3, 6);
+    job_2 = new Job(2, 30, 4, 1);
+    system.add_job(job_0);
+    system.add_job(job_1);
+    system.add_job(job_2);
 
-system.memory.print();
-console.log('\n');
-
-// run the system here
-let rounds = 10;
-let round = 0;
-while(round <= rounds) {
-    system.run();
-    console.log('--time = ' + system.time);
     system.memory.print();
     console.log('\n');
-    round += 1;
+
+    // run the system here
+    let rounds = 10;
+    let round = 0;
+    while(round <= rounds) {
+        system.run();
+        console.log('--time = ' + system.time);
+        system.memory.print();
+        console.log('\n');
+        round += 1;
+    }
 }
+

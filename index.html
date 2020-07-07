@@ -2,8 +2,8 @@
  * @Author: One_Random
  * @Date: 2020-07-06 11:17:25
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-06 11:17:57
- * @FilePath: /os/index.html
+ * @LastEditTime: 2020-07-07 15:26:16
+ * @FilePath: /OS/index.html
  * @Description: Copyright © 2020 One_Random. All rights reserved.
 -->
 <!DOCTYPE html>
@@ -11,9 +11,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>memory allocation</title>
+    <style>
+        .input_number_default {
+            width: 5%;
+            margin-right: 3%;
+        }
+    </style>
+    <script src="./memory.js"></script>
+    <script>
+        var system;
+        function set_up_system() {
+            let set_mem_select = document.getElementById('setofmem');
+            let setofmem = parseInt(set_mem_select.options[set_mem_select.selectedIndex].value);
+            let size = parseInt(setofmem * document.getElementById('max_mem_size').value);
+            
+            let algorithm_select = document.getElementById('algorithm');
+            let type = algorithm_select.options[algorithm.selectedIndex].value;
+
+            system = new System(size, type);
+            
+            // add debug info
+            console.log(system)
+        }
+
+        function add_a_job() {
+            let order_number = parseInt(document.getElementById('order_number').value);
+
+            let set_job_select = document.getElementById('setofjob');
+            let setofjob = parseInt(set_job_select.options[set_job_select.selectedIndex].value);
+            let size = parseInt(setofjob * document.getElementById('size').value);
+
+            let in_time = parseInt(document.getElementById('in_time').value);
+            let run_time = parseInt(document.getElementById('run_time').value);
+            
+            let job = new Job(order_number, size, in_time, run_time);
+
+            // add debug info
+            console.log(job);
+
+            system.wait_jobs.push(job);
+
+            // display
+            order_number_str = "order number: " + job.order_number;
+            size_str = "size: " + job.size;
+            in_time_str = "in time: " + job.in_time;
+            run_time_str = "run time: " + job.run_time;
+
+            job_str = order_number + "<br>" + size_str + "<br>" + in_time_str + "<br>" + run_time_str + "<br>";
+
+            document.getElementById('confirmed_jobs').innerHTML += job_str;
+        }
+    </script>
 </head>
 <body>
-    <script src="./memory.js"></script>
+    <div id="set_up" >
+        <div id="set_up_system">
+            <h2>Memory Allocation</h2>
+            <h4>Set up the system</h4>
+            the size of memory: <input type="text" style="width: 8%;" id="max_mem_size"> 
+                <select id="setofmem"> 
+                    <option value=1>bytes</option>
+                    <option value=1024>KB</option>
+                    <option value=1048576>MB</option>
+                </select>
+            <br><br>
+            allocation algorithm: 
+                <select id="algorithm"> 
+                    <option value="FF">FF</option>
+                    <option value="BF">BF</option>
+                    <option value="WF">WF</option>
+                </select>
+            <br><br>
+            <button onclick="set_up_system()">set up the system</button>
+        </div>
+        <div id="set_up_jobs">
+            <h4>Set up jobs</h4>
+            <button onclick="read_from_the_file()" id="detail_button">read from the file</button>
+            <br><br>
+            <div id="unconfirmed_jobs">
+                <div id="input_jobs" style="display: inline;">
+                    order number: <input type="number" class="input_number_default" id="order_number">
+                    size: <input type="number" style="width: 5%;" id="size">
+                        <select style="margin-right: 3%;" id="setofjob"> 
+                            <option value=1>bytes</option>
+                            <option value=1024>KB</option>
+                            <option value=1028576>MB</option>
+                        </select>
+                    in time: <input type="number" class="input_number_default" id="in_time">
+                    run time: <input type="number" class="input_number_default" id="run_time">
+                </div>
+                <button onclick="add_a_job()">add the job</button>
+            </div>
+            <div id="confirmed_jobs">
+            </div>
+            <br><br>
+        </div>
+        <div id="oprate">
+            <button onclick="system.run()">run</button>
+            <button onclick="system.print()">info</button>
+        </div>
+    </div>
 </body>
 </html>
