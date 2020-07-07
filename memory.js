@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-07 16:33:31
+ * @LastEditTime: 2020-07-07 16:43:33
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -24,7 +24,20 @@ class System {
 
     // 添加作业到作业队列
     add_job(job) {
-        this.wait_jobs.push(job);
+        if (this.wait_jobs.length == 0)
+            this.wait_jobs.push(job);
+        else {
+            for (let i = 0; i < this.wait_jobs.length; i++) {
+                if (this.wait_jobs[i].in_time > job.in_time) {
+                    this.wait_jobs.splice(i, 0, job);
+                    break;
+                }
+                else if (this.wait_jobs[i].in_time == job.in_time)
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行

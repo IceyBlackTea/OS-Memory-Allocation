@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 11:17:25
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-07 16:34:21
+ * @LastEditTime: 2020-07-07 16:44:20
  * @FilePath: /OS/index.html
  * @Description: Copyright © 2020 One_Random. All rights reserved.
 -->
@@ -50,17 +50,17 @@
             // add debug info
             console.log(job);
 
-            system.wait_jobs.push(job);
+            if (system.add_job(job)) {
+                // display
+                order_number_str = "order number: " + job.order_number;
+                size_str = "size: " + job.size;
+                in_time_str = "in time: " + job.in_time;
+                run_time_str = "run time: " + job.run_time;
 
-            // display
-            order_number_str = "order number: " + job.order_number;
-            size_str = "size: " + job.size;
-            in_time_str = "in time: " + job.in_time;
-            run_time_str = "run time: " + job.run_time;
+                job_str = order_number_str + "<br>" + size_str + "<br>" + in_time_str + "<br>" + run_time_str + "<br>";
 
-            job_str = order_number + "<br>" + size_str + "<br>" + in_time_str + "<br>" + run_time_str + "<br>";
-
-            document.getElementById('confirmed_jobs').innerHTML += job_str;
+                document.getElementById('confirmed_jobs').innerHTML += job_str;
+            }
         }
     </script>
 </head>
