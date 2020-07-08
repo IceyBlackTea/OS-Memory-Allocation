@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 11:17:25
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-08 11:39:14
+ * @LastEditTime: 2020-07-08 12:53:24
  * @FilePath: /OS/index.html
  * @Description: Copyright © 2020 One_Random. All rights reserved.
 -->
@@ -33,6 +33,8 @@
             // error handle
 
             system = new System(size, type);
+
+            update_job_display();
             
             // add debug info
             if (debug)
@@ -101,6 +103,16 @@
             update_job_display();
         }
 
+        function run() {
+            let rounds = parseInt(document.getElementById("second").value);
+            let round = 0;
+            while(round <= rounds) {
+                system.run();
+                system.print();
+                round += 1;
+            }
+        }
+
         function update_job_display() {
             let jobs_str = "";
             for (let i = 0; i < system.wait_jobs.length; i++) {
@@ -165,8 +177,11 @@
             <br><br>
         </div>
         <div id="operate">
-            <button onclick="system.run()">step</button>
-            <button onclick="system.print()">info</button>
+            stop time: <input type="number" style="width: 5%;" id="second">
+            <button onclick="run()">run</button>
+            <br><br>
+            <button onclick="system.run()">go step</button>
+            <button onclick="system.print()">information</button>
         </div>
     </div>
 </body>

@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-08 11:32:48
+ * @LastEditTime: 2020-07-08 12:41:54
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -58,7 +58,6 @@ class System {
             this.begin_jobs();
             step += 1;
         }
-        
     }
 
     // 清除所有作业
@@ -294,7 +293,6 @@ function test() {
     let round = 0;
     while(round <= rounds) {
         system.run();
-        console.log('--time = ' + system.time);
         system.memory.print();
         console.log('\n');
         round += 1;
