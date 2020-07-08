@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-07 16:43:33
+ * @LastEditTime: 2020-07-08 11:32:48
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -24,20 +24,29 @@ class System {
 
     // 添加作业到作业队列
     add_job(job) {
-        if (this.wait_jobs.length == 0)
-            this.wait_jobs.push(job);
-        else {
-            for (let i = 0; i < this.wait_jobs.length; i++) {
-                if (this.wait_jobs[i].in_time > job.in_time) {
-                    this.wait_jobs.splice(i, 0, job);
+        let flag = true;
+        for (let i = 0; i < this.wait_jobs.length; i++) {
+            if (this.wait_jobs[i].order_number != job.order_number) {
+                if (this.wait_jobs[i].in_time == job.in_time) {
+                    flag = false;
                     break;
                 }
-                else if (this.wait_jobs[i].in_time == job.in_time)
-                    return false;
+                else if (this.wait_jobs[i].in_time > job.in_time) {
+                    this.wait_jobs.splice(i, 0, job);
+                    flag = true;
+                    break;
+                }
+            } 
+            else {
+                flag = false;
+                break;
             }
         }
 
-        return true;
+        if (flag)
+            this.wait_jobs.push(job);
+
+        return flag;
     }
 
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
@@ -50,6 +59,13 @@ class System {
             step += 1;
         }
         
+    }
+
+    // 清除所有作业
+    remove_jobs() {
+        this.wait_jobs.length = 0;
+        this.running_jobs.length = 0;
+        this.end_jobs.length = 0;
     }
 
     // 处理完成的作业
