@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-09 11:00:53
+ * @LastEditTime: 2020-07-09 11:01:41
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -10,7 +10,7 @@
 // 解决异步错误问题
 function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
-  }  
+}  
 
 /*
  * 系统的类
