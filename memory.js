@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-09 11:01:41
+ * @LastEditTime: 2020-07-09 11:02:03
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -44,7 +44,7 @@ class System {
             this.wait_jobs.push(job);
     
             return true;
-        })
+        });
     }
 
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
