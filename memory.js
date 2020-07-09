@@ -2,10 +2,15 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-09 08:49:35
+ * @LastEditTime: 2020-07-09 11:00:53
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
+
+// 解决异步错误问题
+function sleep (time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }  
 
 /*
  * 系统的类
@@ -24,20 +29,22 @@ class System {
 
     // 添加作业到作业队列
     add_job(job) {
-        for (let i = 0; i < this.wait_jobs.length; i++) {
-            if (this.wait_jobs[i].in_time > job.in_time) {
-                if (this.wait_jobs[i].order_number != job.order_number) {
-                    this.wait_jobs.splice(i, 0, job);
-                    return true;
-                }
-                else
-                    return false;
-            }   
-        }
-        
-        this.wait_jobs.push(job);
-
-        return true;
+        sleep(0).then(() => {
+            for (let i = 0; i < this.wait_jobs.length; i++) {
+                if (this.wait_jobs[i].in_time > job.in_time) {
+                    if (this.wait_jobs[i].order_number != job.order_number) {
+                        this.wait_jobs.splice(i, 0, job);
+                        return true;
+                    }
+                    else
+                        return false;
+                }   
+            }
+            
+            this.wait_jobs.push(job);
+    
+            return true;
+        })
     }
 
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
@@ -61,12 +68,15 @@ class System {
     // 处理完成的作业
     finish_jobs() {
         // 遍历寻找完成的作业
+        console.log('running length', this.running_jobs.length);
+        console.log('running', this.running_jobs);
         for (let i = 0; i < this.running_jobs.length; i++) {
             let job = this.running_jobs[i];
             if (job.end_time == this.time) {
                 // 处理作业队列
                 this.end_jobs.push(job);
                 this.running_jobs.splice(i, 1);
+                console.log('unload', this.running_jobs);
             }
         }
         if (this.end_jobs.length != 0)
@@ -80,6 +90,7 @@ class System {
             return;
             
         let job = this.wait_jobs[0];
+        console.log('wait_0 ', job)
         if (job.in_time <= this.time) {
             let part_num = -1;
             if (this.type == 'FF')
@@ -97,6 +108,7 @@ class System {
                 this.memory.load_job(part_num, job);
                 // 处理作业队列
                 this.running_jobs.push(job);
+                console.log('load', this.running_jobs);
                 this.wait_jobs.splice(0, 1);
             }
         }
@@ -267,26 +279,17 @@ function test() {
     // set the system here
     // var system = new System(100 * 1024 * 1024, 'FF');
     var system = new System(100, 'FF');
-
     // add jobs here
-    job_0 = new Job(0, 10, 1, 4);
-    job_1 = new Job(1, 20, 3, 6);
-    job_2 = new Job(2, 30, 4, 1);
-    system.add_job(job_0);
-    system.add_job(job_1);
-    system.add_job(job_2);
-
-    system.memory.print();
-    console.log('\n');
 
     // run the system here
     let rounds = 10;
     let round = 0;
     while(round <= rounds) {
         system.run();
-        system.memory.print();
+        system.print();
         console.log('\n');
         round += 1;
     }
 }
 
+// test();
