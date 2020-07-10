@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-09 11:02:03
+ * @LastEditTime: 2020-07-10 15:03:45
  * @FilePath: /OS/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -30,6 +30,7 @@ class System {
     // 添加作业到作业队列
     add_job(job) {
         sleep(0).then(() => {
+            console.log('>>>');
             for (let i = 0; i < this.wait_jobs.length; i++) {
                 if (this.wait_jobs[i].in_time > job.in_time) {
                     if (this.wait_jobs[i].order_number != job.order_number) {
@@ -40,9 +41,8 @@ class System {
                         return false;
                 }   
             }
-            
+
             this.wait_jobs.push(job);
-    
             return true;
         });
     }

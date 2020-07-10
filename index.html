@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 11:17:25
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-08 12:53:24
+ * @LastEditTime: 2020-07-10 15:06:32
  * @FilePath: /OS/index.html
  * @Description: Copyright © 2020 One_Random. All rights reserved.
 -->
@@ -114,19 +114,21 @@
         }
 
         function update_job_display() {
-            let jobs_str = "";
-            for (let i = 0; i < system.wait_jobs.length; i++) {
-                let job = system.wait_jobs[i];
-                order_number_str = "order number: " + job.order_number;
-                size_str = "size: " + job.size;
-                in_time_str = "in time: " + job.in_time;
-                run_time_str = "run time: " + job.run_time;
+            sleep(0).then(() => {
+                let jobs_str = "";
+                for (let i = 0; i < system.wait_jobs.length; i++) {
+                    let job = system.wait_jobs[i];
+                    order_number_str = "order number: " + job.order_number;
+                    size_str = "size: " + job.size;
+                    in_time_str = "in time: " + job.in_time;
+                    run_time_str = "run time: " + job.run_time;
 
-                job_str = "<br>" + order_number_str + "<br>" + size_str + "<br>" + in_time_str + "<br>" + run_time_str + "<br>";
-                jobs_str += job_str;
-            }
-            
-            document.getElementById('confirmed_jobs').innerHTML = jobs_str;
+                    job_str = "<br>" + order_number_str + "<br>" + size_str + "<br>" + in_time_str + "<br>" + run_time_str + "<br>";
+                    jobs_str += job_str;
+                }
+                
+                document.getElementById('confirmed_jobs').innerHTML = jobs_str;
+             });
         }
     </script>
 </head>
