@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 08:56:50
+ * @LastEditTime: 2020-07-14 09:31:43
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -73,7 +73,7 @@ function set_svg(width, height) {
 }
 
 function add(index, part_number, job_info){
-    let size = job_info[1];
+    let size = dataset[index] - job_info[1];
     if (size == dataset[index]) {
         parts_info[index][1] = job_info[0];
         d3.select("#part_" + parts_info[index][0])

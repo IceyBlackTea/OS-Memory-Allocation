@@ -2,8 +2,8 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-10 15:03:45
- * @FilePath: /OS/memory.js
+ * @LastEditTime: 2020-07-14 09:28:37
+ * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
 
@@ -68,14 +68,13 @@ class System {
     // 处理完成的作业
     finish_jobs() {
         // 遍历寻找完成的作业
-        console.log('running length', this.running_jobs.length);
-        console.log('running', this.running_jobs);
         for (let i = 0; i < this.running_jobs.length; i++) {
             let job = this.running_jobs[i];
             if (job.end_time == this.time) {
                 // 处理作业队列
                 this.end_jobs.push(job);
                 this.running_jobs.splice(i, 1);
+                finish(i);
                 console.log('unload', this.running_jobs);
             }
         }
@@ -204,6 +203,8 @@ class Memory {
 
         this.used_size += job.size;
         this.max_order_number += 1;
+
+        add(part_num, this.max_order_number, [job.order_number, job.size, "red"]);
     }
 
     // 完成作业，释放内存资源
@@ -224,6 +225,7 @@ class Memory {
                     this.max_order_numbe -= 1;
                 this.parts[i].size += this.parts[i + 1].size;
                 this.parts.splice(i + 1, 1);
+                merge(i);
             }
                     
         }
