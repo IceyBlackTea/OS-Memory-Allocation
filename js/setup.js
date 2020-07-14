@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 09:00:53
+ * @LastEditTime: 2020-07-14 17:37:58
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -26,7 +26,7 @@ var debug = true;
         if (debug)
             console.log(system)
 
-        set_svg(400, 400);
+        set_svg(400, 400, size);
     }
 
     function remove_all_jobs() {

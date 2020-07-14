@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 09:28:37
+ * @LastEditTime: 2020-07-14 17:43:53
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -30,7 +30,6 @@ class System {
     // 添加作业到作业队列
     add_job(job) {
         sleep(0).then(() => {
-            console.log('>>>');
             for (let i = 0; i < this.wait_jobs.length; i++) {
                 if (this.wait_jobs[i].in_time > job.in_time) {
                     if (this.wait_jobs[i].order_number != job.order_number) {
@@ -52,6 +51,8 @@ class System {
         let step = 0;
         while (step < steps) {
             this.time += 1;
+            console.log("time " + this.time);
+            
             this.finish_jobs();
             this.begin_jobs();
             step += 1;
@@ -74,8 +75,6 @@ class System {
                 // 处理作业队列
                 this.end_jobs.push(job);
                 this.running_jobs.splice(i, 1);
-                finish(i);
-                console.log('unload', this.running_jobs);
             }
         }
         if (this.end_jobs.length != 0)
@@ -89,7 +88,6 @@ class System {
             return;
             
         let job = this.wait_jobs[0];
-        console.log('wait_0 ', job)
         if (job.in_time <= this.time) {
             let part_num = -1;
             if (this.type == 'FF')
@@ -98,7 +96,6 @@ class System {
                 part_num = this.memory.BF(job);
             else if (this.type == 'WF')
                 part_num = this.memory.WF(job);
-            // console.log(part_num);
             if (part_num != -1) {
                 // 设置作业属性，开始运行
                 job.start_time = this.time;
@@ -107,7 +104,6 @@ class System {
                 this.memory.load_job(part_num, job);
                 // 处理作业队列
                 this.running_jobs.push(job);
-                console.log('load', this.running_jobs);
                 this.wait_jobs.splice(0, 1);
             }
         }
@@ -204,7 +200,8 @@ class Memory {
         this.used_size += job.size;
         this.max_order_number += 1;
 
-        add(part_num, this.max_order_number, [job.order_number, job.size, "red"]);
+        console.log("add " + part_num);
+        // add(part_num, this.max_order_number, [job.order_number, job.size, "red"]);
     }
 
     // 完成作业，释放内存资源
@@ -216,6 +213,8 @@ class Memory {
                     this.used_size -= this.parts[i].size;
                     this.parts[i].job_num = -1;
                     end_jobs.splice(j, 1);
+                    // finish(i);
+                    console.log("finish " + i);
                     break;
                 }
                     
@@ -225,7 +224,8 @@ class Memory {
                     this.max_order_numbe -= 1;
                 this.parts[i].size += this.parts[i + 1].size;
                 this.parts.splice(i + 1, 1);
-                merge(i);
+                // merge(i);
+                console.log("merge " + i);
             }
                     
         }

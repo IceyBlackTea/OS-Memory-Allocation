@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 17:26:06
+ * @LastEditTime: 2020-07-14 17:37:06
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -16,14 +16,14 @@ var text_x_padding = 2.5;
 var text_y_padding = 12.5;
 var trans_padding = 5;
 
-var dataset = [100];
+var dataset = [];
 var parts_info = [[0, -1, default_color]];
 
 function svg_scale(length, times = 2) {
     return length * times;
 }
 
-function set_svg(width, height) {
+function set_svg(width, height, max_size) {
     // 定义画布
     const svg = d3.select("svg")
                 .attr("width", width)
@@ -31,6 +31,7 @@ function set_svg(width, height) {
                 .attr("font-family", "Consolas");
                 //.attr("font-family", "Helvetica");
 
+    dataset.push(max_size);
     
     var rects = svg.selectAll(".mem_rect")
                 .data(dataset)
