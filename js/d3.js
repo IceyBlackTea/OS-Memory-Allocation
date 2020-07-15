@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 22:00:00
+ * @LastEditTime: 2020-07-15 15:17:52
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -25,7 +25,7 @@ function svg_scale(length, times = 2) {
 
 function set_svg(width, height, max_size) {
     // 定义画布
-    const svg = d3.select("svg")
+    const svg = d3.select("body").select("#visiable_svg")
                 .attr("width", width)
                 .attr("height", height)
                 .attr("font-family", "Consolas");
