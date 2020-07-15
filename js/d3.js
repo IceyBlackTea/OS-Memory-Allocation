@@ -2,24 +2,28 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-15 15:17:52
+ * @LastEditTime: 2020-07-16 00:25:16
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
 var slot = 1000;
-var default_height = 20;
-var default_color = "#000000";
-var background_color = "#ffffff";
+var default_height = 40;
+var default_color = "#2ea44e";
+var background_color = "whitesmoke";
 var rect_x_padding = 0;
-var rect_y_padding = 1.5;
-var text_x_padding = 2.5;
-var text_y_padding = 12.5;
-var trans_padding = 5;
+var rect_y_padding = 3;
+var text_x_padding = 5;
+var text_y_padding = 25;
+var trans_padding = 10;
 
 var dataset = [];
 var parts_info = [[0, -1, default_color]];
 
-function svg_scale(length, times = 2) {
+function svg_x_scale(length, times = 3) {
+    return length * times;
+}
+
+function svg_y_scale(length, times = 1) {
     return length * times;
 }
 
@@ -42,12 +46,12 @@ function set_svg(width, height, max_size) {
                     return "part_" + parts_info[i][0];
                 })
                 .attr("y", (d, i)  => {
-                    return svg_scale(i * (default_height + rect_y_padding));
+                    return svg_y_scale(i * default_height) + rect_y_padding;
                 })
                 .attr("x", rect_x_padding)
-                .attr("height", svg_scale(default_height))
+                .attr("height", svg_y_scale(default_height))
                 .attr("width", (d)  => {
-                    return svg_scale(d);
+                    return svg_x_scale(d);
                 })
                 .attr("fill", (d, i) => {
                     return parts_info[i][2];
@@ -66,10 +70,10 @@ function set_svg(width, height, max_size) {
                     })
                     .attr("x", (d, i) => {
                         let r = d3.select("#part_" + parts_info[i][0]);
-                        return svg_scale(rect_x_padding + parseInt(d) + text_x_padding);
+                        return svg_x_scale(parseInt(d)) + rect_x_padding + text_x_padding;
                     })
                     .attr("y", (d, i) => {
-                        return svg_scale(i * (default_height + rect_y_padding) + text_y_padding);
+                        return svg_y_scale(i * default_height) + rect_y_padding + text_y_padding;
                     })
 }
 
@@ -91,7 +95,7 @@ function add(index, part_number, job_info){
     .attr("y", (d, i) => {
         let y = d3.select("#part_" + parts_info[i][0]).attr("y");
         if (i > index)
-            return parseInt(y) + svg_scale(default_height + rect_y_padding);
+            return parseInt(y) + svg_y_scale(default_height) + rect_y_padding;
         else
             return parseInt(y);
     });
@@ -103,9 +107,9 @@ function add(index, part_number, job_info){
     .attr("y", (d, i) => {
         let y = d3.select("#part_" + parts_info[i][0]).attr("y");
         if (i > index)
-            return parseInt(y) + svg_scale(default_height + rect_y_padding + text_y_padding);
+            return parseInt(y) + svg_y_scale(default_height) + rect_y_padding + text_y_padding;
         else
-            return parseInt(y) + svg_scale(text_y_padding);
+            return parseInt(y) + text_y_padding;
     });
 
     let orignal = d3.select("#part_" + parts_info[index][0]);
@@ -121,7 +125,7 @@ function add(index, part_number, job_info){
     parts_info[index][2] = job_info[2];
     parts_info.splice(index + 1, 0, [part_number, -1, default_color]);
 
-    orignal.attr("width", orignal_width - svg_scale(size))
+    orignal.attr("width", orignal_width - svg_x_scale(size))
     .transition()
     .duration(slot)
     .attr("fill", parts_info[index][2]);
@@ -129,40 +133,41 @@ function add(index, part_number, job_info){
     d3.select("#size_" + parts_info[index][0])
     .transition()
     .duration(slot)
-    .attr("x", orignal_width + orignal_x + svg_scale(text_x_padding + trans_padding))
+    .attr("x", orignal_width + orignal_x + text_x_padding + trans_padding)
     .transition()
     .duration(slot)
     .attr("fill", background_color)
     .transition()
     .duration(slot)
-    .attr("x", orignal_width + orignal_x - svg_scale(size - text_x_padding))
-    .attr("fill", default_color)
+    .attr("x", orignal_width + orignal_x - svg_x_scale(size) + text_x_padding)
+    .attr("fill", "black")
     .text(dataset[index]);
         
-    d3.select("svg")
+    d3.select("body").select("#visiable_svg")
     .selectAll(".mem_rect")
     .data(dataset)
     .enter()
     //.append("rect")
     //.insert("rect", "#part_" + parts_info[index+2][0])
     .insert("rect", "#size_" + parts_info[index][0])
+    .attr("fill", default_color)
     .attr("class", "mem_rect")
     .attr("id", "part_" + parts_info[index+1][0])
     .attr("y", orignal_y)
-    .attr("x", orignal_width + orignal_x - svg_scale(size))
+    .attr("x", orignal_width + orignal_x - svg_x_scale(size))
     .attr("height", orignal_height)
-    .attr("width", svg_scale(size))
+    .attr("width", svg_x_scale(size))
     .transition()
     .duration(slot)
-    .attr("x", orignal_width + orignal_x - svg_scale(size - trans_padding))
+    .attr("x", orignal_width + orignal_x - svg_x_scale(size) + trans_padding)
     .transition()
     .duration(slot)
-    .attr("y", orignal_y + svg_scale(default_height + rect_y_padding))
+    .attr("y", orignal_y + svg_y_scale(default_height) + rect_y_padding)
     .transition()
     .duration(slot)
-    .attr("x", svg_scale(rect_x_padding));
+    .attr("x", rect_x_padding);
 
-    d3.select("svg")
+    d3.select("body").select("#visiable_svg")
     .selectAll(".mem_size_text")
     .data(dataset)
     .enter()
@@ -171,14 +176,14 @@ function add(index, part_number, job_info){
     .text(size)
     .attr("class", "mem_size_text")
     .attr("id", "size_" + parts_info[index+1][0])
-    .attr("x", orignal_width + orignal_x + svg_scale(trans_padding + text_y_padding))
-    .attr("y", orignal_y + svg_scale(default_height + rect_y_padding + text_y_padding))
+    .attr("x", orignal_width + orignal_x + trans_padding + text_y_padding)
+    .attr("y", orignal_y + svg_y_scale(default_height) + rect_y_padding + text_y_padding)
     .attr("fill", background_color)
     .transition()
     .delay(slot * 2)
     .duration(slot)
-    .attr("x", orignal_x + svg_scale(size + text_x_padding))
-    .attr("fill", default_color);
+    .attr("x", orignal_x + svg_x_scale(size) + text_x_padding)
+    .attr("fill", "black");
 
     return slot * 3;
 }
@@ -208,7 +213,7 @@ function merge(index){
     .attr("y", (d, i) => {
         let y = d3.select("#part_" + parts_info[i][0]).attr("y");
         if (i > index)
-            return parseInt(y) - svg_scale(default_height + rect_y_padding);
+            return parseInt(y) - svg_y_scale(default_height) - rect_y_padding;
         else
             return parseInt(y);
     });
@@ -220,23 +225,23 @@ function merge(index){
     .attr("y", (d, i) => {  
         let y = d3.select("#part_" + parts_info[i][0]).attr("y");
         if (i > index)
-            return parseInt(y) - svg_scale(default_height + rect_y_padding - text_y_padding);
+            return parseInt(y) - svg_y_scale(default_height) - rect_y_padding + text_y_padding;
         else
-            return parseInt(y) + svg_scale(text_y_padding);
+            return parseInt(y) + text_y_padding;
     });
 
     orignal.transition()
     .delay(slot * 2)
     .duration(slot)
-    .attr("fill", "black")
+    .attr("fill", default_color)
     .transition()
     .duration(0)
-    .attr("width", orignal_width + svg_scale(dataset[index+1]))
+    .attr("width", orignal_width + svg_x_scale(dataset[index+1]))
 
     d3.select("#part_" + parts_info[index+1][0])
     .transition()
     .duration(slot)
-    .attr("x", orignal_width + orignal_x + svg_scale(trans_padding))
+    .attr("x", orignal_width + orignal_x + trans_padding)
     .transition()
     .duration(slot)
     .attr("y", orignal_y)
@@ -248,21 +253,21 @@ function merge(index){
     d3.select("#size_" + parts_info[index][0])
     .transition()
     .duration(slot)
-    .attr("x", orignal_width + orignal_x + svg_scale(dataset[index + 1] + text_x_padding + trans_padding))
+    .attr("x", orignal_width + orignal_x + svg_x_scale(dataset[index + 1]) + text_x_padding + trans_padding)
     .transition()
     .duration(slot)
     .attr("fill", background_color)
     .transition()
     .duration(slot)
     .text(dataset[index] + dataset[index+1])
-    .attr("x", orignal_width + orignal_x + svg_scale(dataset[index + 1] + text_x_padding))
-    .attr("fill", default_color);
+    .attr("x", orignal_width + orignal_x + svg_x_scale(dataset[index + 1]) + text_x_padding)
+    .attr("fill", "black");
 
     d3.select("#size_" + parts_info[index+1][0])
     .transition()
     .duration(slot)
     .attr("fill", background_color)
-    .attr("x", orignal_width + orignal_x + svg_scale(dataset[index + 1] + text_x_padding + trans_padding))
+    .attr("x", orignal_width + orignal_x + svg_x_scale(dataset[index + 1]) + text_x_padding + trans_padding)
     .remove();
 
     dataset[index] += dataset[index+1];

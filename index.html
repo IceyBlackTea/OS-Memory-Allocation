@@ -1,90 +1,292 @@
-<!--
- * @Author: One_Random
- * @Date: 2020-07-06 11:17:25
- * @LastEditors: One_Random
- * @LastEditTime: 2020-07-15 15:24:15
- * @FilePath: /OS/index.html
- * @Description: Copyright © 2020 One_Random. All rights reserved.
--->
 <!DOCTYPE html>
 <html lang="en">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./css/primer.css" rel="stylesheet" type="text/css"/>
     <title>memory allocation</title>
-    <style>
-        .input_number_default {
-            width: 5%;
-            margin-right: 3%;
+    <style type="text/css">
+    body{
+        margin: 0;
+        padding: 0;
+        /* height: 100%; */
+        background-color: whitesmoke;
+    }
+    .job{
+        height:25px;
+        width:150px;
+        border-radius:4px;
+        border:1px solid #DBDBDB;
+    }
+    .sidenav {
+            height: 100%;
+            width: 0; /*原始宽度*/
+            /* position: fixed; */
+            /*z-index、top、left共同控制侧栏的悬浮（上方1，下方-1）*/
+            z-index: 1;
+            top: 0;
+            right: 0px;
+            background-color:#24292e;
+            overflow-x: hidden;
+            transition: 0.5s; /*侧栏延迟0.5s显示*/
+            padding-top: 14px;
+            float: right; 
         }
+        
+        /*侧边栏标签选择器*/
+        .sidenav a{
+            padding: 0px 0px 0px 40px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #24292e;
+            display: block;
+            transition: 0.3s; /*标签延迟0.3s显示*/
+        }
+        
+        /*侧栏标签和关闭按钮光标的效果*/
+        .sidenav a:hover, .offcanvas a:focus{
+            color: #f1f1f1;
+        }
+        
+        /*侧栏的位置选择器*/
+        .sidenav{
+            position: absolute;
+            top: 0;
+            right: 0px;
+            font-size: 20px;
+            margin-right: 0px;
+        }
+    #main {
+        transition: margin-right .5s;/*主体内容延迟0.5s整体y右移动*/
+        padding: 0;
+    }
     </style>
-    <script src="./js/memory.js"></script>
-    <script src="./js/lib/d3.v5.min.js"></script>
-</head>
-<body>
-    <div id="set_up">
-        <div id="set_up_system">
-            <h2>Memory Allocation</h2>
-            <h4>Set up the system</h4>
-            the size of memory: <input type="text" style="width: 8%;" id="max_mem_size"> 
-                <select id="setofmem"> 
-                    <option value=1>bytes</option>
-                    <option value=1024>KB</option>
-                    <option value=1048576>MB</option>
-                </select>
-            <br><br>
-            allocation algorithm: 
-                <select id="algorithm"> 
-                    <option value="FF">FF</option>
-                    <option value="BF">BF</option>
-                    <option value="WF">WF</option>
-                </select>
-            <br><br>
-            <button onclick="set_up_system()">set up the system</button>
+
+    <script type="text/javascript" src="./js/lib/d3.v5.min.js"></script>
+    <script type="text/javascript" src="./js/memory.js"></script>
+    <script type="text/javascript">
+        // var currprogram = "news";
+        var flag = 0;
+        function changeNav() {
+            if (flag == 0){
+                flag = 1;
+                document.getElementById("mySidenav").style.width = "400px";
+                document.getElementById("main").style.marginRight = "160px";
+            }
+            else if (flag == 1){
+                flag = 0;
+                document.getElementById("mySidenav").style.width = "0";
+                document.getElementById("main").style.marginRight= "0";
+            }       
+        }
+
+        function display(ID){
+            var str = ID.replace(ID.substring(0, 1), ID.substring(0, 1).toUpperCase())
+            document.title = str + "-Rua!";
+
+            document.getElementById(currprogram).style.display='none';
+            document.getElementById(ID).style.display='block';
+            currprogram = ID;
+            
+            changeNav(); 
+        }
+
+        function hide_tips()  
+        {       
+            var ui =document.getElementById("showtips");      
+            ui.style.visibility="hidden";  
+        }
+        function show_tips()
+        {
+            var ui =document.getElementById("showtips");      
+            ui.style.visibility="visible";  
+        }
+
+        // setInterval(function(){
+        //         var myDate = new Date();
+        //         var x=myDate.getFullYear()+"年"+ myDate.getMonth() + 1 + "月" + myDate.getDate()+"日 "+myDate.getHours()+"点"+myDate.getMinutes()+"分"+myDate.getSeconds()+"秒";
+        //         document.getElementById("time"). innerHTML=x;
+
+        //         var One_Random = Math.random();
+        //         document.getElementById("One_Random"). innerHTML=One_Random;
+        //     },1000); 
+    </script>
+
+    <body>
+        <!-- <div id="mySidenav" class="sidenav">
+            <a href='javascript:changeNav()'>Tips</a>
         </div>
-        <div id="set_up_jobs">
-            <h4>Set up jobs</h4>
-            <button onclick="remove_all_jobs()" id="clean_button">remove all jobs</button>
-            <br><br>
-            <input type="file" accept="application/json" id="json_file">
-            <button onclick="read_from_file()" id="read_button">read from the file</button>
-            <br><br>
-            <div id="unconfirmed_jobs">
-                <div id="input_jobs" style="display: inline;">
-                    order number: <input type="number" class="input_number_default" id="order_number">
-                    size: <input type="number" style="width: 5%;" id="size">
-                        <select style="margin-right: 3%;" id="setofjob"> 
+         -->
+        <div  class="anim-scale-in bg-gray-dark text-white p-2">
+            <!-- <div style="display:flex;flex-direction:row"> -->
+            <h2 class="anim-fade-in" style="display:inline; color:white; margin-left: 40px;">
+                Memory Allocation
+            </h2>
+            <h3 class="btn btn-sm" type="button" style="border-color: #555454; border-width: 1px; display:inline; color: white; margin-left: 2%; background-color: #24292e;" onclick="show_tips()"> 
+                Tips
+            </h3> 
+            <!-- </div> -->
+        </div>
+
+    <div id="main" class="anim-fade-in">
+        <div class="application-main" style="display:flex;height: auto;" >
+            <div class="col-3 " style="height:inherit; width: 32%;">
+                <div class="box-shadow p-3" style="height:780px; background-color:whitesmoke; width: 100%; ">
+                    <div class="box" style="height: auto; background-color:whitesmoke; width: auto;margin-left:40px"> 
+                        <br>
+                        <h2 class="m-0">
+                            Set up system
+                        </h2>
+                        <sapn style="margin-top:16px;display:block">the size of memory</sapn>
+                        <br>
+                        <span id="size" style="margin:8px,0px,20px,0px">  <input type="text" style="height:25px;width:110px;border-radius:4px;border:1px solid #DBDBDB;" id="max_mem_size">
+                        <select id="setofmem" style="border-radius:2px;border:1px solid #DBDBDB"> 
                             <option value=1>bytes</option>
                             <option value=1024>KB</option>
-                            <option value=1028576>MB</option>
+                            <option value=1048576>MB</option>
                         </select>
-                    in time: <input type="number" class="input_number_default" id="in_time">
-                    run time: <input type="number" class="input_number_default" id="run_time">
+                        </span>
+                        <br><br>
+                        <button class="btn btn-sm" type="button" style="background-color:#2ea44e; color: white;" onclick="set_up_system()">set up the system</button>
+                        <br><br>
+                        <br><br>
+                    </div>   
+                   
+                    <div class="box" style="height: auto; background-color: whitesmoke; width: auto; margin-left:40px">
+                        <h2 class="m-0">
+                            Set up jobs
+                        </h2>
+                        <br>
+                        <div id="operate" >
+                            <button  class="btn btn-sm" type="button" onclick="remove_all_jobs()" id="clean_button" style="background-color: #e34c25; color:white;">remove all jobs</button>
+                            <button class="btn btn-sm" type="button" onclick="system.run(); anime = new Anime();" style="background-color: #2ea44e; color:white; width: 105px; margin-left: 150px;">load all jobs</button>
+                        </div> 
+                        <br>
+                        <input style="height:25px;width:210px;border-radius:4px;border:0px solid #DBDBDB; font-size: 12px;" type="file" onchange="read_from_file()" accept="application/json" id="json_file">
+                        <br>
+                        <br>
+                        <div id="unconfirmed_jobs" style="margin-top:10px;">
+                            <button class="btn btn-sm" id="manually" onclick="display_manually();">add jobs manually</button>
+                            <div id="input" style="display: none;">
+                                <div id="input_jobs" style="display: inline;">
+                                    order number
+                                    <input type="number" class="job" id="order_number" style="width:107px;margin-right:5px;">
+                                    size
+                                    <input type="number" style="width: 115px;" id="size" class="job">
+                                        <select style="margin-right: 3%;" id="setofjob"> 
+                                            <option value=1>bytes</option>
+                                            <option value=1024>KB</option>
+                                            <option value=1028576>MB</option>
+                                        </select>
+                                    <br><br>
+                                    in time
+                                    <input type="number" class="job" id="in_time" style="margin-right:5px;">
+                                    run time
+                                    <input type="number" class="job" id="run_time">
+                                <br><br>
+                                    <button class="btn btn-sm" type="button" onclick="add_a_job()">add the job</button>
+                             </div>
+                        </div>
+                        </div>    
+                        <br>
+                        <div id = "showtips" class="Box" style="width: 400px;">
+                            <div class="Box-row" style="background-color:#79b8ff; width: 400px;">
+                                <div style="display:flex;flex-direction:row">
+                                    <h3 class="m-0" style="color: snow;">
+                                        Tips
+                                    </h3>
+                                    <button class="btn-octicon" type="button" aria-label="Trashcan icon" onclick="hide_tips()" style="margin-left: 300px;">
+                                      
+                                        <svg class="octicon octicon-trashcan" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M11 2H9c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1H2c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1v9c0 .55.45 1 1 1h7c.55 0 1-.45 1-1V5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H3V5h1v8h1V5h1v8h1V5h1v8h1V5h1v9zm1-10H2V3h9v1z"></path></svg>
+                                    </button>  
+                                </div> 
+    
+                                <div> 
+                                    <h5 style="color: snow;">
+                                        1、Set the system before run or it will work. 
+                                    </h5>
+                                    <h5 style="color: snow;">
+                                        2、Choose the size from bytes to MB to set up. 
+                                    </h5>
+                                    <h5 style="color: snow;">
+                                        3、Check the job and running process in detail.
+                                    </h5>
+                                    <h5 style="color: snow;">
+                                        4、Choose the algorithm from FF, BF and WF before you play the animation.
+                                    </h5>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>   
+            </div>    
+           
+                <div class="box-shadow p-3" style="display:flex; height:780px; background-color:whitesmoke; width: 40% ">
+                    <br>
+                    <div id="visiable" style="margin-top: 3%; margin-left: 5%;">
+                        <h2 class="m-0">
+                            Play the animation
+                        </h2>
+                        <br>
+                        <div id="control">
+                            <sapn>
+                                allocation algorithm
+                                <select id="algorithm" style="border-radius:2px;border:1px solid #DBDBDB"> 
+                                    <option value="FF">FF</option>
+                                    <option value="BF">BF</option>
+                                    <option value="WF">WF</option>
+                                </select>
+                            </sapn>
+                            <br>
+                            <br>
+                            <button class="btn btn-sm" type="button" style="width: 80px; margin-right: 5px;" onclick="anime.step_play();">step play</button>
+                            <button class="btn btn-sm" type="button" style="width: 80px; margin-right: 50px;" onclick="anime.auto_play();">auto play</button>
+                            <button id="btn-pause" class="btn btn-sm" type="button" style="background-color:#79b8ff; color: white; width: 80px; margin-right: 50px;" onclick="pause();">pause</button>
+                            <button class="btn btn-sm" type="button" style="width: 60px; background-color: #e34c25; color:white; margin-right: 5px;" onclick="anime = new Anime(); set_svg(400, 400); document.getElementById('btn-pause').innerHTML = 'pause';">reset</button>
+                        </div>
+                        <br><br>
+                        <div id="figure">
+                            <svg id="visiable_svg"></svg>
+                        </div>
+                        <script src="./js/d3.js"></script>
+                        <script src="./js/setup.js"></script>
+                      
+                    </div>
                 </div>
-                <button onclick="add_a_job()">add the job</button>
-            </div>
-            <div id="confirmed_jobs">
-            </div>
-            <br><br>
-        </div>
-        <div id="operate">
-            <button onclick="system.step">go step</button>
-            <button onclick="system.run();anime = new Anime();">run</button>
-            stop time: <input type="number" style="width: 5%;" id="second">
-            <button onclick="step()">stop at</button>
-            <button onclick="system.print()">information</button>
-            <br><br>
-            <button onclick="anime.step_play()">step play</button>
-            <button onclick="anime.auto_play()">auto play</button>
-            <button onclick="anime.go_on = !anime.go_on; anime.auto_play()">pause</button>
+
+                <div class="box-shadow p-3" style="height:780px; background-color:whitesmoke; width: 28%;">
+                    <!-- <div class="box-shadow p-3" style="height:800px; background-color:#24292e; width: 400px; margin-top: 0px;"> -->
+                        <br>
+                        <div id="showprocess" class="Box" style="width: 85%; height: 45%; margin-left:0px; margin-top: 0px;">
+                            <div class="Box-row" style="background-color:white; height: 100%; width: 100%; ">
+                                <h4 class="m-0" style="color:grey; ">  
+                                    Operation Process
+                                </h4>
+                                    <div id="process" class="one-fourth column" style="height: 230px; overflow: auto; background-color: white; width: 260px; border-radius:3px;">
+                                        <div class="p-3 height-fit border" style="color: grey;">
+                                            
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div id="showjob" class="Box" style="width: 85%; height: 45%;margin-left:0px;">
+                            <div class="Box-row" style="background-color:white;  height: 100%; width: 100%;">
+                                <h4 class="m-0" style="color:grey;">
+                                    Jobs added to the system
+                                </h4>
+                                    <div id="jobs" class="one-fourth column" style="height: 230px; overflow: auto; background-color: white; width: 260px; border-radius:3px;">
+                                        <div class="p-3 height-fit border" style="color: grey;">
+                                            
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    <!-- </div> -->
+                </div>
+              
         </div>
     </div>
-    <div id="visable">
-        <div id="figure">
-            <svg id="visiable_svg"></svg>
-        </div>
-        <script src="./js/d3.js"></script>
-        <script src="./js/setup.js"></script>
-    </div>
-</body>
+    </body>
 </html>

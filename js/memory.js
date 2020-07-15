@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-15 08:36:34
+ * @LastEditTime: 2020-07-16 00:16:06
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -59,28 +59,29 @@ class System {
             this.finish_jobs();
             this.begin_jobs();
 
-            console.log("time " + time);
+            // console.log("time " + time);
             queue.push({"time": time, "func" : "pass"});
             
-            step += 1;
+            // step += 1;
         }
-    }
 
-    a() {
-        console.log(queue);
+        if (release) {
+            let str = "The system worked sucessfully.\n"
+                + "Now you can start to play the animation.\n";
+        }
     }
 
     step() {
-        let step = 0;
-        while (step < steps) {
-            time += 1;
-            console.log("time " + time);
+        // let step = 0;
+        // while (step < steps) {
+        //     time += 1;
+        //     console.log("time " + time);
             
-            this.finish_jobs();
-            this.begin_jobs();
+        //     this.finish_jobs();
+        //     this.begin_jobs();
             
-            step += 1;
-        }
+        //     step += 1;
+        // }
     }
 
     // 清除所有作业
@@ -224,9 +225,9 @@ class Memory {
         this.used_size += job.size;
         this.max_order_number += 1;
 
-        console.log("add " + part_num);
-        queue.push({"time": time, "func": "add", "para" : [part_num, this.max_order_number, [job.order_number, job.size, "red"]]});
-        console.log(queue);
+        //console.log("add " + part_num);
+        queue.push({"time": time, "func": "add", "para" : [part_num, this.max_order_number, [job.order_number, job.size, "#79b8ff"]]});
+        //console.log(queue);
     }
 
     // 完成作业，释放内存资源
@@ -238,12 +239,9 @@ class Memory {
                     this.used_size -= this.parts[i].size;
                     this.parts[i].job_num = -1;
                     end_jobs.splice(j, 1);
-
-                    console.log("finish " + i);
-
+                    //console.log("finish " + i);
                     queue.push({"time": time, "func" : "finish", "para":[i]});
-                    console.log(queue);
-
+                    //console.log(queue);
                     break;
                 }
                     
@@ -253,11 +251,9 @@ class Memory {
                     this.max_order_numbe -= 1;
                 this.parts[i].size += this.parts[i + 1].size;
                 this.parts.splice(i + 1, 1);
-
-                console.log("merge " + i);
-                
+                //console.log("merge " + i); 
                 queue.push({"time" : time, "func" : "merge", "para":[i]});
-                console.log(queue);
+                //console.log(queue);
             }
                     
         }
@@ -318,16 +314,23 @@ class Anime {
     }
 
     step_play() {
-        console.log(this.index);
+        //console.log(this.index);
         if (this.index == queue.length - 1)
             return;
         
         this.index += 1;
             
         let i = this.index;
-        console.log(this.play_time, queue[i].func);
+        //console.log(this.play_time, queue[i].func);
         if (queue[i].func == "add") {
             this.wait_time = add(queue[i].para[0], queue[i].para[1], queue[i].para[2]);
+            if (release) {
+                let str = "Add a job.\n" +
+                        "The job info:\n" +
+                        "No.    " + queue[i].para[0] +
+                        "Size:  " + queue[i].para[1] +
+                        "Color: " + queue[i].para[2] + "\n\n";
+            }
         }
         else if (queue[i].func == "finish") {
             this.wait_time = finish(queue[i].para[0]);
@@ -343,14 +346,17 @@ class Anime {
 
     async auto_play() {
         if (this.play_time > time) {
-            console.log(this.play_time, time, "over");
+            // if (release) {
+            //     let str = "The animation is over. The system ran for " + this.play_time + " unit time");
+            // }
+            
             return;
         }
         else {
             if (this.go_on == true) {
                 await this.step_play();
                 await sleep(this.wait_time + const_time).then(() => {this.auto_play();});
-            } 
+            }
         }
     }
 }
