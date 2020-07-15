@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 11:17:25
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 09:30:36
+ * @LastEditTime: 2020-07-15 08:37:50
  * @FilePath: /OS/index.html
  * @Description: Copyright © 2020 One_Random. All rights reserved.
 -->
@@ -68,11 +68,15 @@
             <br><br>
         </div>
         <div id="operate">
+            <button onclick="system.step">go step</button>
+            <button onclick="system.run();anime = new Anime();">run</button>
             stop time: <input type="number" style="width: 5%;" id="second">
-            <button onclick="run()">run</button>
-            <br><br>
-            <button onclick="system.run()">go step</button>
+            <button onclick="step()">stop at</button>
             <button onclick="system.print()">information</button>
+            <br><br>
+            <button onclick="anime.step_play()">step play</button>
+            <button onclick="anime.auto_play()">auto play</button>
+            <button onclick="anime.go_on = !anime.go_on; anime.auto_play()">pause</button>
         </div>
     </div>
     <div id="visable">

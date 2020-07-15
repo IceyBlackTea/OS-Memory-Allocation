@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 17:37:58
+ * @LastEditTime: 2020-07-15 08:58:25
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -30,7 +30,7 @@ var debug = true;
     }
 
     function remove_all_jobs() {
-        document.getElementById('confirmed_jobs').innerHTML = "";
+        // document.getElementById('confirmed_jobs').innerHTML = "";
         if (system != undefined)
             system.remove_jobs();
         else {
@@ -91,11 +91,11 @@ var debug = true;
         update_job_display();
     }
 
-    function run() {
+    function step() {
         let rounds = parseInt(document.getElementById("second").value);
         let round = 0;
         while(round <= rounds) {
-            system.run();
+            system.step();
             system.print();
             round += 1;
         }
@@ -103,18 +103,18 @@ var debug = true;
 
     function update_job_display() {
         sleep(0).then(() => {
-            let jobs_str = "";
-            for (let i = 0; i < system.wait_jobs.length; i++) {
-                let job = system.wait_jobs[i];
-                order_number_str = "order number: " + job.order_number;
-                size_str = "size: " + job.size;
-                in_time_str = "in time: " + job.in_time;
-                run_time_str = "run time: " + job.run_time;
+            // let jobs_str = "";
+            // for (let i = 0; i < system.wait_jobs.length; i++) {
+            //     let job = system.wait_jobs[i];
+            //     order_number_str = "order number: " + job.order_number;
+            //     size_str = "size: " + job.size;
+            //     in_time_str = "in time: " + job.in_time;
+            //     run_time_str = "run time: " + job.run_time;
 
-                job_str = "<br>" + order_number_str + "<br>" + size_str + "<br>" + in_time_str + "<br>" + run_time_str + "<br>";
-                jobs_str += job_str;
-            }
+            //     job_str = "<br>" + order_number_str + "<br>" + size_str + "<br>" + in_time_str + "<br>" + run_time_str + "<br>";
+            //     jobs_str += job_str;
+            // }
             
-            document.getElementById('confirmed_jobs').innerHTML = jobs_str;
+            // document.getElementById('confirmed_jobs').innerHTML = jobs_str;
             });
     }

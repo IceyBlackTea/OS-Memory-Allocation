@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 17:43:53
+ * @LastEditTime: 2020-07-15 08:36:34
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -11,6 +11,10 @@
 function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }  
+
+var queue = new Array();
+var time = -1;
+const const_time = 50;
 
 /*
  * 系统的类
@@ -23,8 +27,6 @@ class System {
         this.wait_jobs = new Array(); // 等待运行作业队列
         this.running_jobs = new Array(); // 运行中作业队列          
         this.end_jobs = new Array(); // 等待结束作业队列
-        
-        this.time = -1; // 模拟cpu单位时间
     }
 
     // 添加作业到作业队列
@@ -47,14 +49,36 @@ class System {
     }
 
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
-    run(steps = 1) {
-        let step = 0;
-        while (step < steps) {
-            this.time += 1;
-            console.log("time " + this.time);
+    run() {
+        while (true) {
+            if (this.wait_jobs.length == 0 && this.running_jobs.length ==0)
+                break;
+                
+            time += 1;
             
             this.finish_jobs();
             this.begin_jobs();
+
+            console.log("time " + time);
+            queue.push({"time": time, "func" : "pass"});
+            
+            step += 1;
+        }
+    }
+
+    a() {
+        console.log(queue);
+    }
+
+    step() {
+        let step = 0;
+        while (step < steps) {
+            time += 1;
+            console.log("time " + time);
+            
+            this.finish_jobs();
+            this.begin_jobs();
+            
             step += 1;
         }
     }
@@ -71,7 +95,7 @@ class System {
         // 遍历寻找完成的作业
         for (let i = 0; i < this.running_jobs.length; i++) {
             let job = this.running_jobs[i];
-            if (job.end_time == this.time) {
+            if (job.end_time == time) {
                 // 处理作业队列
                 this.end_jobs.push(job);
                 this.running_jobs.splice(i, 1);
@@ -88,7 +112,7 @@ class System {
             return;
             
         let job = this.wait_jobs[0];
-        if (job.in_time <= this.time) {
+        if (job.in_time <= time) {
             let part_num = -1;
             if (this.type == 'FF')
                 part_num = this.memory.FF(job);
@@ -98,7 +122,7 @@ class System {
                 part_num = this.memory.WF(job);
             if (part_num != -1) {
                 // 设置作业属性，开始运行
-                job.start_time = this.time;
+                job.start_time = time;
                 job.end_time = job.start_time + job.run_time;
 
                 this.memory.load_job(part_num, job);
@@ -113,7 +137,7 @@ class System {
     print() {
         console.log('system info');
         console.log('system type: ' + this.type);
-        console.log('system time: ' + this.time);
+        console.log('system time: ' + time);
         console.log('\n');
         
         this.memory.print();
@@ -201,7 +225,8 @@ class Memory {
         this.max_order_number += 1;
 
         console.log("add " + part_num);
-        // add(part_num, this.max_order_number, [job.order_number, job.size, "red"]);
+        queue.push({"time": time, "func": "add", "para" : [part_num, this.max_order_number, [job.order_number, job.size, "red"]]});
+        console.log(queue);
     }
 
     // 完成作业，释放内存资源
@@ -213,8 +238,12 @@ class Memory {
                     this.used_size -= this.parts[i].size;
                     this.parts[i].job_num = -1;
                     end_jobs.splice(j, 1);
-                    // finish(i);
+
                     console.log("finish " + i);
+
+                    queue.push({"time": time, "func" : "finish", "para":[i]});
+                    console.log(queue);
+
                     break;
                 }
                     
@@ -224,8 +253,11 @@ class Memory {
                     this.max_order_numbe -= 1;
                 this.parts[i].size += this.parts[i + 1].size;
                 this.parts.splice(i + 1, 1);
-                // merge(i);
+
                 console.log("merge " + i);
+                
+                queue.push({"time" : time, "func" : "merge", "para":[i]});
+                console.log(queue);
             }
                     
         }
@@ -276,22 +308,49 @@ class Job {
     }
 }
 
-function test() {
-    console.log('--init')
-    // set the system here
-    // var system = new System(100 * 1024 * 1024, 'FF');
-    var system = new System(100, 'FF');
-    // add jobs here
+class Anime {
+    constructor() {
+        this.play_time = 0;
+        this.wait_time = 0;
+        this.before_time = 0;
+        this.index = -1;
+        this.go_on = true;
+    }
 
-    // run the system here
-    let rounds = 10;
-    let round = 0;
-    while(round <= rounds) {
-        system.run();
-        system.print();
-        console.log('\n');
-        round += 1;
+    step_play() {
+        console.log(this.index);
+        if (this.index == queue.length - 1)
+            return;
+        
+        this.index += 1;
+            
+        let i = this.index;
+        console.log(this.play_time, queue[i].func);
+        if (queue[i].func == "add") {
+            this.wait_time = add(queue[i].para[0], queue[i].para[1], queue[i].para[2]);
+        }
+        else if (queue[i].func == "finish") {
+            this.wait_time = finish(queue[i].para[0]);
+        }
+        else if (queue[i].func == "merge") {
+            this.wait_time = merge(queue[i].para[0]);
+        }
+        else if (queue[i].func == "pass") {
+            this.wait_time = 1000;
+            this.play_time += 1;
+        } 
+    }
+
+    async auto_play() {
+        if (this.play_time > time) {
+            console.log(this.play_time, time, "over");
+            return;
+        }
+        else {
+            if (this.go_on == true) {
+                await this.step_play();
+                await sleep(this.wait_time + const_time).then(() => {this.auto_play();});
+            } 
+        }
     }
 }
-
-// test();

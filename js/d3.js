@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-14 17:37:06
+ * @LastEditTime: 2020-07-14 22:00:00
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -179,6 +179,8 @@ function add(index, part_number, job_info){
     .duration(slot)
     .attr("x", orignal_x + svg_scale(size + text_x_padding))
     .attr("fill", default_color);
+
+    return slot * 3;
 }
 
 function finish(index) {
@@ -187,6 +189,8 @@ function finish(index) {
     .transition()
     .duration(slot)
     .attr("fill", default_color);
+
+    return slot * 1;
 }
 
 function merge(index){
@@ -267,4 +271,6 @@ function merge(index){
     parts_info.splice(index + 1, 1);
 
     d3.selectAll(".mem_rect").data(dataset);
+
+    return slot * 3;
 }
