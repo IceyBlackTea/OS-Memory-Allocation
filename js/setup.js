@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 21:00:00
+ * @LastEditTime: 2020-07-16 21:44:02
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -33,6 +33,8 @@ async function set_up_system() {
     }
         
     system = new System(size, type);
+
+    remove_all_jobs_display(); 
     
     // add debug info
     if (debug)
@@ -138,9 +140,11 @@ function pause() {
     anime.go_on = !anime.go_on;
     let btn = document.getElementById("btn-pause");
     if (btn.innerHTML == "pause") {
+        btn.style = "background-color:#f9c513; color: white; width: 70px; margin-left: 48px;"
         btn.innerHTML = "resume";
     } 
     else {
+        btn.style = "background-color:#79b8ff; color: white; width: 70px; margin-left: 48px;"
         btn.innerHTML = "pause";
     }
     anime.auto_play();
@@ -148,9 +152,6 @@ function pause() {
 
 async function load_jobs() {
     if (document.getElementById('btn-reset').innerHTML == 'set jobs') {
-        document.getElementById('btn-reset').innerHTML = 'reset jobs';
-        document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 80px;';
-        document.getElementById('btn-pause').innerHTML = 'pause'; 
         await set_up_system();
         for (let i = 0; i < jobs.length; i++) {
            if (await system.add_job(jobs[i]) == false) {
@@ -158,6 +159,10 @@ async function load_jobs() {
                return;
            }
         }
+        document.getElementById('btn-reset').innerHTML = 'reset jobs';
+        document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 40px;';
+        document.getElementById('btn-pause').innerHTML = 'pause'; 
+        
         let str = "The system has been set up.<br>" +
                 "The algorithm is " + system.type + ".<br>" +
                 "The max memory size is " + system.memory.size + "MB.<br>";
@@ -172,16 +177,20 @@ async function load_jobs() {
     }
     else {
         pause();
-        
-        reset_svg(400, 600, input_size);
         set_up_system();
+        await set_up_system();
         for (let i = 0; i < jobs.length; i++) {
-            console.log(jobs);
-            system.add_job(jobs[i]);
-        }
+           if (await system.add_job(jobs[i]) == false) {
+               alert('The job cannot be added.\nPlease check!');
+               return;
+           }
+        }           
+        reset_svg(400, 600, input_size);
+        
         let str = "The system has been reset up.<br>" +
                 "The algorithm is " + system.type + ".<br>" +
                 "The max memory size is " + system.memory.size + "MB.<br>";
+                
         add_operation_display(str);
         
         sleep(0).then(() => {system.run();});
