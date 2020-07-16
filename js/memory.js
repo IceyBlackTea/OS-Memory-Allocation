@@ -2,11 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
-<<<<<<< HEAD
- * @LastEditTime: 2020-07-16 21:30:44
-=======
- * @LastEditTime: 2020-07-16 21:50:50
->>>>>>> a9193e98b7e0bbed7094d504ce1e26273b69a3b6
+ * @LastEditTime: 2020-07-16 23:09:00
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -359,7 +355,7 @@ class Anime {
         console.log(this.play_time, queue[i].func);
         if (queue[i].func == "add") {
             this.wait_time = add(queue[i].para[0], queue[i].para[1], queue[i].para[2]);
-            let str =   "Select Part" + queue[i].para[1] + "<br>" + 
+            let str =   "Select Part " + queue[i].para[1] + "<br>" + 
                         "The job start to run: " +
                         "No.     " + queue[i].para[2][0] + " " +
                         "Size:   " + queue[i].para[2][1];
