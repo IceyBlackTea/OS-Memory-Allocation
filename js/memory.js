@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 16:36:22
+ * @LastEditTime: 2020-07-16 17:18:30
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -321,7 +321,6 @@ class Anime {
     }
 
     async step_play() {
-        //console.log(this.index);
         if (this.index == queue.length - 1)
             return;
         
@@ -331,39 +330,62 @@ class Anime {
         console.log(this.play_time, queue[i].func);
         if (queue[i].func == "add") {
             this.wait_time = add(queue[i].para[0], queue[i].para[1], queue[i].para[2]);
-            if (release) {
-                let str = "Add a job.\n" +
-                        "The job info:\n" +
-                        "No.    " + queue[i].para[0] +
-                        "Size:  " + queue[i].para[1] +
-                        "Color: " + queue[i].para[2] + "\n\n";
-            }
+            let str =   "Select Part" + queue[i].para[1] + "<br>" + 
+                        "The job start to run:<br>" +
+                        "No.     " + queue[i].para[2][0] + "<br>" +
+                        "Size:   " + queue[i].para[2][1] + "<br>";
+                        // "Color: " + queue[i].para[2] + "<br>";
+                        
+            add_operation_display(str);
         }
         else if (queue[i].func == "finish") {
+            let str = "The job at part " + queue[i].para[0] + " finished.<br>";
+                        
+            add_operation_display(str);
             this.wait_time = finish(queue[i].para[0]);
         }
         else if (queue[i].func == "merge") {
+            let str = "Merge two parts:<br>" +
+                        "Part " + queue[i].para[0] + "<br>" +
+                        "Part " + parseInt(queue[i].para[0] + 1) + "<br>" ;
+                        
+            add_operation_display(str);
             this.wait_time = merge(queue[i].para[0]);
         }
         else if (queue[i].func == "pass") {
             this.wait_time = 1000;
             this.play_time += 1;
+
+            let str = "Time go on: " + this.play_time;
+                        
+            add_operation_display(str);
         } 
     }
 
     async auto_play() {
         if (this.play_time > time) {
-            // if (release) {
-            //     let str = "The animation is over. The system ran for " + this.play_time + " unit time");
-            // }
+            let str = "The animation is over.";
+                        
+            add_operation_display(str);
             
             return;
         }
         else {
             if (this.go_on == true) {
                 await this.step_play();
-                if (this.index != queue.length - 1)
+                if (this.index != queue.length - 1) {
                     await sleep(this.wait_time + const_time).then(() => {this.auto_play();});
+                }
+                else {
+                    let str = "The animation is over.";
+                        
+                    add_operation_display(str);
+                }
+            }
+            else {
+                let str = "Pause.";
+                        
+                add_operation_display(str);
             }
         }
     }

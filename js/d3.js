@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 16:34:25
+ * @LastEditTime: 2020-07-16 17:12:57
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -273,7 +273,7 @@ function add(index, part_number, job_info){
     .text(size)
     .attr("class", "mem_size_text")
     .attr("id", "size_" + parts_info[index+1][0])
-    .attr("x", orignal_width + orignal_x + trans_padding + text_y_padding)
+    .attr("x", orignal_width + orignal_x + trans_padding + text_x_padding)
     .attr("y", orignal_y + svg_y_scale(default_height) + rect_y_padding + text_y_padding)
     .attr("fill", background_color)
     .transition()
@@ -292,7 +292,7 @@ function finish(index) {
     .duration(slot)
     .attr("fill", default_color);
 
-    return slot * 1;
+    return slot * 2;
 }
 
 function merge(index) {

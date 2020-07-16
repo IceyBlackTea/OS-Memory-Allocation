@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 16:41:35
+ * @LastEditTime: 2020-07-16 17:09:25
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -153,9 +153,22 @@ async function load_jobs() {
         for (let i = 0; i < jobs.length; i++) {
            await system.add_job(jobs[i]);
         }
+        let str = "The system has been set up.<br>" +
+                "The algorithm is " + system.type + ".<br>" +
+                "The max memory size is " + system.memory.size + "MB.<br>";
+        add_operation_display(str);
+
         sleep(0).then(() => {system.run();});
+        
+        add_operation_display("You can play the animation now.\n");
+
         set_svg(400, 400, input_size);
         anime = new Anime();
+
+        
+
+        
+
     }
     else {
         pause();
@@ -203,7 +216,7 @@ function add_job_display(job) {
 function add_operation_display(operation) {
     let str ='<div class="p-3 height-fit border" style="width:inherit;color:grey">'+operation+'</div>';
     let p = document.getElementById('process');
-    p.innerHTML += str;
+    p.innerHTML = str + p.innerHTML;
 }
 
 /*07/16 */
