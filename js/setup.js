@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 14:36:18
+ * @LastEditTime: 2020-07-16 14:49:02
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -54,7 +54,7 @@ async function set_up_system() {
 function remove_all_jobs() {
     // document.getElementById('confirmed_jobs').innerHTML = "";
     if (system != undefined) {
-        system.remove_jobs();
+        jobs.length = 0;
         
         if (release) {
             let str = "The jobs has been removed.\n";
@@ -107,8 +107,9 @@ function add_a_job() {
     let order_number = parseInt(document.getElementById('order_number').value);
 
     let set_job_select = document.getElementById('setofjob');
-    let setofjob = parseInt(set_job_select.options[set_job_select.selectedIndex].value);
-    let size = parseInt(setofjob * document.getElementById('size').value);
+    // let setofjob = parseInt(set_job_select.options[set_job_select.selectedIndex].value);
+    // let size = parseInt(setofjob * document.getElementById('size').value);
+    let size = parseInt(document.getElementById('job_size').value);
 
     let in_time = parseInt(document.getElementById('in_time').value);
     let run_time = parseInt(document.getElementById('run_time').value);
@@ -116,20 +117,6 @@ function add_a_job() {
     let job = new Job(order_number, size, in_time, run_time);
 
     jobs.push(job);
-
-    // let result = system.add_job(job);
-
-    // // add debug info
-    // if (debug)
-    //     console.log(result, job);
-
-    // if (!result) {
-    //     if (release) {
-    //         let str = "The jobs cannot be added.\n"
-    //             + "Please check the jobs.\n";
-    //     }
-    //     alert("The jobs cannot be added!");
-    // }
 
     update_job_display();
 }
@@ -143,7 +130,6 @@ function display_manually() {
         document.getElementById('input').style='display:block'; 
         document.getElementById('manually').innerHTML = 'hide';
     }
-    
 }
 
 function pause() {
@@ -207,24 +193,7 @@ async function load_jobs() {
         anime = new Anime();
            
     }      
-    // // set_up_system();
-    // // system.type = document.getElementById('algorithm').options[algorithm.selectedIndex].value; 
-    // pause();
-    // if (system != undefined)
-    //             system = system_back;
-    // reset_svg(400, 400, input_size);
-    //  system.run(); anime = new Anime();
 }
-
-// function step() {
-//     let rounds = parseInt(document.getElementById("second").value);
-//     let round = 0;
-//     while(round <= rounds) {
-//         system.step();
-//         system.print();
-//         round += 1;
-//     }
-// }
 
 function update_job_display() {
     sleep(0).then(() => {

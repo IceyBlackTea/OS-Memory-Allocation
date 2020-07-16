@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 14:04:15
+ * @LastEditTime: 2020-07-16 14:49:47
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -55,15 +55,6 @@ class System {
         });
     }
 
-    // reset() {
-    //     remove_all_jobs();
-
-    //     for (let i = 0; i < this.jobs.length; i++) {
-    //         this.add_job(this.jobs[i], false);
-    //         console.log(this.jobs);
-    //     }
-    // }
-
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
     run() {
         if (this.wait_jobs.length == 0)
@@ -86,7 +77,6 @@ class System {
             // console.log(queue);
             console.log(system_back);
             
-            // step += 1;
         }
 
         console.log(queue);
@@ -95,19 +85,6 @@ class System {
             let str = "The system worked sucessfully.\n"
                 + "Now you can start to play the animation.\n";
         }
-    }
-
-    step() {
-        // let step = 0;
-        // while (step < steps) {
-        //     time += 1;
-        //     console.log("time " + time);
-            
-        //     this.finish_jobs();
-        //     this.begin_jobs();
-            
-        //     step += 1;
-        // }
     }
 
     // 清除所有作业
