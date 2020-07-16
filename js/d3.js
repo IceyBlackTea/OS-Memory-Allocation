@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 11:44:45
+ * @LastEditTime: 2020-07-16 16:34:25
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -18,12 +18,13 @@ var text_x_padding = 5;
 var text_y_padding = 25;
 var trans_padding = 10;
 
+var max_size_ = 100;
 var dataset = [];
 var parts_info = [];
 var order = 0;
 
-function svg_x_scale(length, times = 3) {
-    return length * times;
+function svg_x_scale(length) {
+    return length * 200 / max_size_;
 }
 
 function svg_y_scale(length, times = 1) {
@@ -39,6 +40,7 @@ function set_svg(width, height, max_size) {
                 //.attr("font-family", "Helvetica");
 
     order = 0;
+    max_size_ = max_size;
     dataset.push(max_size);
     parts_info.push([0, -1, default_color]);
     
@@ -74,7 +76,6 @@ function set_svg(width, height, max_size) {
                         return "size_" + parts_info[i][0];
                     })
                     .attr("x", (d, i) => {
-                        let r = d3.select("#part_" + parts_info[i][0]);
                         return svg_x_scale(parseInt(d)) + rect_x_padding + text_x_padding;
                     })
                     .attr("y", (d, i) => {
@@ -126,7 +127,6 @@ async function reset_svg(width, height, max_size) {
                         return "size_" + parts_info[i][0];
                     })
                     .attr("x", (d, i) => {
-                        let r = d3.select("#part_" + parts_info[i][0]);
                         return svg_x_scale(parseInt(d)) + rect_x_padding + text_x_padding;
                     })
                     .attr("y", (d, i) => {

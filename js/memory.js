@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 14:49:47
+ * @LastEditTime: 2020-07-16 16:36:22
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -15,7 +15,6 @@ function sleep (time) {
 var queue = new Array();
 var time = -1;
 const const_time = 50;
-var system_back;
 
 /*
  * 系统的类
@@ -39,8 +38,6 @@ class System {
                 if (this.wait_jobs[i].in_time > job.in_time) {
                     if (this.wait_jobs[i].order_number != job.order_number) {
                         this.wait_jobs.splice(i, 0, job);
-                        //system_back = this;
-                        //console.log("add back", system_back);
                         return true;
                     }
                     else
@@ -49,8 +46,6 @@ class System {
             }
 
             this.wait_jobs.push(job);
-            //system_back = this;
-            //console.log('add back', system_back);
             return true;
         });
     }
@@ -75,11 +70,9 @@ class System {
             // console.log("time " + time);
             queue.push({"time": time, "func" : "pass"});
             // console.log(queue);
-            console.log(system_back);
-            
         }
 
-        console.log(queue);
+        // console.log(queue);
         
         if (release) {
             let str = "The system worked sucessfully.\n"
@@ -359,7 +352,6 @@ class Anime {
     }
 
     async auto_play() {
-        console.log(system_back);
         if (this.play_time > time) {
             // if (release) {
             //     let str = "The animation is over. The system ran for " + this.play_time + " unit time");
