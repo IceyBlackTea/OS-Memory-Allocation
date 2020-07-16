@@ -229,17 +229,17 @@
                             <sapn>
                                 allocation algorithm
                                 <select id="algorithm" style="border-radius:2px;border:1px solid #DBDBDB"> 
-                                    <option value="FF">FF</option>
-                                    <option value="BF">BF</option>
-                                    <option value="WF">WF</option>
+                                    <option value="FF">FF(首先适应算法)</option>
+                                    <option value="BF">BF(最佳适应算法)</option>
+                                    <option value="WF">WF(最差适应算法)</option>
                                 </select>
                             </sapn>
-                            <button class="btn btn-sm" id='btn-reset' type="button" onclick="load_jobs();" style="background-color: #2ea44e; color:white; width: 78px; margin-left: 80px;">set jobs</button>
+                            <button class="btn btn-sm" id='btn-reset' type="button" onclick="load_jobs();" style="background-color: #2ea44e; color:white; width: 78px; margin-left: 40px;">set jobs</button>
                             <br>
                             <br>
-                            <button class="btn btn-sm" type="button" style="width: 80px; margin-right: 5px;" onclick="anime.step_play();">step play</button>
-                            <button class="btn btn-sm" type="button" style="width: 80px; margin-right: 50px;" onclick="anime.auto_play();">auto play</button>
-                            <button id="btn-pause" class="btn btn-sm" type="button" style="background-color:#79b8ff; color: white; width: 70px; margin-left: 40px;" onclick="pause();">pause</button>
+                            <button class="btn btn-sm" type="button" style="width: 80px;" onclick="anime.step_play();">step play</button>
+                            <button class="btn btn-sm" type="button" style="width: 80px; margin-left: 100px;" onclick="anime.auto_play();">auto play</button>
+                            <button id="btn-pause" class="btn btn-sm" type="button" style="background-color:#79b8ff; color: white; width: 70px; margin-left: 48px;" onclick="pause();">pause</button>
                             <!-- <button class="btn btn-sm" type="button" style="width: 60px; background-color: #e34c25; color:white; margin-right: 5px;" onclick="pause(); document.getElementById('btn-pause').innerHTML = 'pause'; set_up_system(); reset_svg(400, 400, input_size); anime = new Anime();">reset</button> -->
                         </div>
                         <br><br>
