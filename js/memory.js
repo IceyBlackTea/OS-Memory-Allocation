@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 17:18:30
+ * @LastEditTime: 2020-07-16 17:39:16
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -31,10 +31,11 @@ class System {
 
     // 添加作业到作业队列
     add_job(job) {
-        console.log(job);
+        if (job.size > system.memory.size)
+            return false;
+            
         sleep(0).then(() => {
             for (let i = 0; i < this.wait_jobs.length; i++) {
-                console.log(this.wait_jobs);
                 if (this.wait_jobs[i].in_time > job.in_time) {
                     if (this.wait_jobs[i].order_number != job.order_number) {
                         this.wait_jobs.splice(i, 0, job);
@@ -54,7 +55,9 @@ class System {
     run() {
         if (this.wait_jobs.length == 0)
             return;
-            
+
+        remove_all_jobs_display();   
+        
         time = -1;
         queue.length = 0;
         
@@ -70,13 +73,6 @@ class System {
             // console.log("time " + time);
             queue.push({"time": time, "func" : "pass"});
             // console.log(queue);
-        }
-
-        // console.log(queue);
-        
-        if (release) {
-            let str = "The system worked sucessfully.\n"
-                + "Now you can start to play the animation.\n";
         }
     }
 
@@ -99,6 +95,10 @@ class System {
                 // console.log('finish jobs', time, job);
                 this.running_jobs.splice(i, 1);
                 this.end_jobs.push(job);
+                sleep(0).then(() => {
+                        console.log(job);
+                        add_full_job_display(job);
+                })
                 i -= 1;
             }
         }

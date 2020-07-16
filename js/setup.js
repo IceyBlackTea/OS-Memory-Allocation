@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 17:09:25
+ * @LastEditTime: 2020-07-16 17:41:55
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -151,7 +151,9 @@ async function load_jobs() {
         document.getElementById('btn-pause').innerHTML = 'pause'; 
         await set_up_system();
         for (let i = 0; i < jobs.length; i++) {
-           await system.add_job(jobs[i]);
+           if (await system.add_job(jobs[i]) == false) {
+               alert('The job cannot be added.\nPlease check!')
+           }
         }
         let str = "The system has been set up.<br>" +
                 "The algorithm is " + system.type + ".<br>" +
@@ -163,12 +165,7 @@ async function load_jobs() {
         add_operation_display("You can play the animation now.\n");
 
         set_svg(400, 400, input_size);
-        anime = new Anime();
-
-        
-
-        
-
+        anime = new Anime();        
     }
     else {
         pause();
@@ -178,10 +175,17 @@ async function load_jobs() {
         for (let i = 0; i < jobs.length; i++) {
             system.add_job(jobs[i]);
         }
+        let str = "The system has been reset up.<br>" +
+                "The algorithm is " + system.type + ".<br>" +
+                "The max memory size is " + system.memory.size + "MB.<br>";
+        add_operation_display(str);
+        
         sleep(0).then(() => {system.run();});
+
+        add_operation_display("You can play the animation now.\n");
+        
         document.getElementById('btn-pause').innerHTML = 'pause'; 
         anime = new Anime();
-           
     }      
 }
 
@@ -207,20 +211,26 @@ function isJob(job) {
 
 /*display jobs on frontpage 07/16*/
 function add_job_display(job) {
-    let str ='<div class="p-3 height-fit border" style="width:inherit;color:grey">'+'id: '+job.order_number+' size: '+job.size+' in_time: '+job.in_time+' run_time: '+job.run_time+'</div>';
+    let str ='<div class="p-3 height-fit border" style="width:inherit;">'+'id: '+job.order_number+' size: '+job.size+' in_time: '+job.in_time+' run_time: '+job.run_time+'</div>';
+    let p = document.getElementById('jobs');
+    p.innerHTML += str;
+}
+
+function add_full_job_display(job) {
+    let str ='<div class="p-3 height-fit border" style="width:inherit;">'+'id: '+job.order_number+' size: '+job.size+' in_time: '+job.in_time+'<br>run_time: '+job.run_time +
+            ' start_time: '+ job.start_time + ' end_time: '+ job.end_time +'</div>';
     let p = document.getElementById('jobs');
     p.innerHTML += str;
 }
 
 /*display operation on frontpage 07/16*/
 function add_operation_display(operation) {
-    let str ='<div class="p-3 height-fit border" style="width:inherit;color:grey">'+operation+'</div>';
+    let str ='<div class="p-3 height-fit border" style="width:inherit;">'+operation+'</div>';
     let p = document.getElementById('process');
     p.innerHTML = str + p.innerHTML;
 }
 
 /*07/16 */
 function remove_all_jobs_display() {
-    console.log(jobs);
     document.getElementById('jobs').innerHTML = '';
 }
