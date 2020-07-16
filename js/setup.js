@@ -2,28 +2,37 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-15 23:42:55
+ * @LastEditTime: 2020-07-16 14:36:18
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
-const debug = true;
-const release = false;
+const debug = false;
+const release = true;
+var jobs = new Array();
 var system;
-function set_up_system() {
-    let set_mem_select = document.getElementById('setofmem');
-    let setofmem = parseInt(set_mem_select.options[set_mem_select.selectedIndex].value);
-    let size = parseInt(setofmem * document.getElementById('max_mem_size').value);
+var anime;
+var input_size = 0;
+async function set_up_system() {
+    // let set_mem_select = document.getElementById('setofmem');
+    // let setofmem = parseInt(set_mem_select.options[set_mem_select.selectedIndex].value);
+    // let size = parseInt(setofmem * document.getElementById('max_mem_size').value);
+    let size = parseInt(document.getElementById('max_mem_size').value);
+    input_size = size;
     
     let algorithm_select = document.getElementById('algorithm');
     let type = algorithm_select.options[algorithm.selectedIndex].value;
 
     // error handle
-    if (setofmem <= 0){
+    if (size <= 0){
         console.alert("memory size cannot be less than 1 bytes");
         return;
     }
         
     system = new System(size, type);
+    system_back = new System(size, type);
+
+    // console.log(jobs);
+    // system.add_jobs(jobs);
 
     update_job_display();
     
@@ -31,11 +40,11 @@ function set_up_system() {
     if (debug)
         console.log(system)
 
-    set_svg(400, 400, size);
+    // set_svg(400, 400, size);
 
     if (release) {
         let str = "The system has been set up and initialized.\n" 
-            + "The memory size is " + size + " " + setofmem + ".\n"
+            + "The memory size is " + size + " " + "MB.\n"
             + "The allocation algorithm is " +  type + ".\n\n"
             + "The system has been initialized.\n";
             + "Now the size of the used is 0 bytes.\n";
@@ -79,9 +88,10 @@ function read_from_file() {
                 if (debug)
                     console.log(job);
 
-                system.add_job(job);
+                jobs.push(job);
+            //    system.add_job(job);
             }
-            update_job_display();
+            // update_job_display();
         }
         else {
             if (release) {
@@ -105,20 +115,21 @@ function add_a_job() {
     
     let job = new Job(order_number, size, in_time, run_time);
 
+    jobs.push(job);
 
-    let result = system.add_job(job);
+    // let result = system.add_job(job);
 
-    // add debug info
-    if (debug)
-        console.log(result, job);
+    // // add debug info
+    // if (debug)
+    //     console.log(result, job);
 
-    if (!result) {
-        if (release) {
-            let str = "The jobs cannot be added.\n"
-                + "Please check the jobs.\n";
-        }
-        alert("The jobs cannot be added!");
-    }
+    // if (!result) {
+    //     if (release) {
+    //         let str = "The jobs cannot be added.\n"
+    //             + "Please check the jobs.\n";
+    //     }
+    //     alert("The jobs cannot be added!");
+    // }
 
     update_job_display();
 }
@@ -145,6 +156,64 @@ function pause() {
         btn.innerHTML = "pause";
     }
     anime.auto_play();
+}
+
+function reset() {
+        if (document.getElementById('btn-reset').innerHTML == 'set jobs') {
+            document.getElementById('btn-reset').innerHTML = 'reset jobs';
+            document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 150px;';
+            document.getElementById('btn-pause').innerHTML = 'pause'; 
+            system.type = document.getElementById('algorithm').options[algorithm.selectedIndex].value;
+            system.run();
+            set_svg(400, 400, input_size);
+            anime = new Anime();
+        }
+        else {
+            pause();
+            anime = new Anime();
+            anime.go_on = true;
+            if (system != undefined)
+                system = system_back;
+            system.type = document.getElementById('algorithm').options[algorithm.selectedIndex].value;
+            system.run();
+            document.getElementById('btn-pause').innerHTML = 'pause'; 
+            reset_svg(400, 400, input_size);   
+        }      
+}
+
+async function load_jobs() {
+    if (document.getElementById('btn-reset').innerHTML == 'set jobs') {
+        document.getElementById('btn-reset').innerHTML = 'reset jobs';
+        document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 80px;';
+        document.getElementById('btn-pause').innerHTML = 'pause'; 
+        await set_up_system();
+        for (let i = 0; i < jobs.length; i++) {
+           await system.add_job(jobs[i]);
+        }
+        sleep(0).then(() => {system.run();});
+        set_svg(400, 400, input_size);
+        anime = new Anime();
+    }
+    else {
+        pause();
+        
+        reset_svg(400, 400, input_size);
+        set_up_system();
+        for (let i = 0; i < jobs.length; i++) {
+            system.add_job(jobs[i]);
+        }
+        sleep(0).then(() => {system.run();});
+        document.getElementById('btn-pause').innerHTML = 'pause'; 
+        anime = new Anime();
+           
+    }      
+    // // set_up_system();
+    // // system.type = document.getElementById('algorithm').options[algorithm.selectedIndex].value; 
+    // pause();
+    // if (system != undefined)
+    //             system = system_back;
+    // reset_svg(400, 400, input_size);
+    //  system.run(); anime = new Anime();
 }
 
 // function step() {

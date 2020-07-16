@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 00:16:06
+ * @LastEditTime: 2020-07-16 14:04:15
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -15,6 +15,7 @@ function sleep (time) {
 var queue = new Array();
 var time = -1;
 const const_time = 50;
+var system_back;
 
 /*
  * 系统的类
@@ -23,7 +24,7 @@ class System {
     constructor(max_mem_size, type) {
         this.memory = new Memory(max_mem_size); // 系统内存
         this.type = type; // 动态存储分配算法
-        // this.jobs = new Array();  // 保存所有作业信息
+        // this.jobs = new Array();
         this.wait_jobs = new Array(); // 等待运行作业队列
         this.running_jobs = new Array(); // 运行中作业队列          
         this.end_jobs = new Array(); // 等待结束作业队列
@@ -31,11 +32,15 @@ class System {
 
     // 添加作业到作业队列
     add_job(job) {
+        console.log(job);
         sleep(0).then(() => {
             for (let i = 0; i < this.wait_jobs.length; i++) {
+                console.log(this.wait_jobs);
                 if (this.wait_jobs[i].in_time > job.in_time) {
                     if (this.wait_jobs[i].order_number != job.order_number) {
                         this.wait_jobs.splice(i, 0, job);
+                        //system_back = this;
+                        //console.log("add back", system_back);
                         return true;
                     }
                     else
@@ -44,14 +49,31 @@ class System {
             }
 
             this.wait_jobs.push(job);
+            //system_back = this;
+            //console.log('add back', system_back);
             return true;
         });
     }
 
+    // reset() {
+    //     remove_all_jobs();
+
+    //     for (let i = 0; i < this.jobs.length; i++) {
+    //         this.add_job(this.jobs[i], false);
+    //         console.log(this.jobs);
+    //     }
+    // }
+
     // 持续运行, 扫描，先检查作业完成释放资源，然后加载作业执行
     run() {
+        if (this.wait_jobs.length == 0)
+            return;
+            
+        time = -1;
+        queue.length = 0;
+        
         while (true) {
-            if (this.wait_jobs.length == 0 && this.running_jobs.length ==0)
+            if (this.wait_jobs.length == 0 && this.running_jobs.length == 0)
                 break;
                 
             time += 1;
@@ -61,10 +83,14 @@ class System {
 
             // console.log("time " + time);
             queue.push({"time": time, "func" : "pass"});
+            // console.log(queue);
+            console.log(system_back);
             
             // step += 1;
         }
 
+        console.log(queue);
+        
         if (release) {
             let str = "The system worked sucessfully.\n"
                 + "Now you can start to play the animation.\n";
@@ -94,14 +120,19 @@ class System {
     // 处理完成的作业
     finish_jobs() {
         // 遍历寻找完成的作业
+        // console.log("running", time, this.running_jobs);
+        let time_ = time;
         for (let i = 0; i < this.running_jobs.length; i++) {
             let job = this.running_jobs[i];
-            if (job.end_time == time) {
+            if (job.end_time == time_) {
                 // 处理作业队列
-                this.end_jobs.push(job);
+                // console.log('finish jobs', time, job);
                 this.running_jobs.splice(i, 1);
+                this.end_jobs.push(job);
+                i -= 1;
             }
         }
+
         if (this.end_jobs.length != 0)
             this.memory.unload_job(this.end_jobs);
     }
@@ -109,28 +140,33 @@ class System {
     // 处理等待执行的作业
     begin_jobs() {
         // 采用先进先出原则，要加载的永远是队列的第0号作业
-        if (this.wait_jobs.length == 0)
-            return;
-            
-        let job = this.wait_jobs[0];
-        if (job.in_time <= time) {
-            let part_num = -1;
-            if (this.type == 'FF')
-                part_num = this.memory.FF(job);
-            else if (this.type == 'BF')
-                part_num = this.memory.BF(job);
-            else if (this.type == 'WF')
-                part_num = this.memory.WF(job);
-            if (part_num != -1) {
-                // 设置作业属性，开始运行
-                job.start_time = time;
-                job.end_time = job.start_time + job.run_time;
+        while (true) {
+            if (this.wait_jobs.length == 0)
+                break;
+        
+            let job = this.wait_jobs[0];
+            // console.log('begin jobs', time, job);
+            if (job.in_time <= time) {
+                let part_num = -1;
+                if (this.type == 'FF')
+                    part_num = this.memory.FF(job);
+                else if (this.type == 'BF')
+                    part_num = this.memory.BF(job);
+                else if (this.type == 'WF')
+                    part_num = this.memory.WF(job);
+                if (part_num != -1) {
+                    // 设置作业属性，开始运行
+                    job.start_time = time;
+                    job.end_time = job.start_time + job.run_time;
 
-                this.memory.load_job(part_num, job);
-                // 处理作业队列
-                this.running_jobs.push(job);
-                this.wait_jobs.splice(0, 1);
+                    this.memory.load_job(part_num, job);
+                    // 处理作业队列
+                    this.wait_jobs.splice(0, 1);
+                    this.running_jobs.push(job);
+                }
             }
+            else
+                break;
         }
     }
 
@@ -239,23 +275,24 @@ class Memory {
                     this.used_size -= this.parts[i].size;
                     this.parts[i].job_num = -1;
                     end_jobs.splice(j, 1);
-                    //console.log("finish " + i);
+                    // console.log("finish " + i);
                     queue.push({"time": time, "func" : "finish", "para":[i]});
-                    //console.log(queue);
+                    // console.log(queue);
                     break;
                 }
-                    
+        }
+        
+        for (let i = this.parts.length-1; i >= 0; i--) {
             // 考虑后一个分区能否与该分区合并
             if ((i < this.parts.length-1) && this.parts[i].job_num == -1 && this.parts[i + 1].job_num == -1) {
                 if (this.parts[i+1].order_number == this.max_order_number)
                     this.max_order_numbe -= 1;
                 this.parts[i].size += this.parts[i + 1].size;
                 this.parts.splice(i + 1, 1);
-                //console.log("merge " + i); 
+                // ("merge " + i); 
                 queue.push({"time" : time, "func" : "merge", "para":[i]});
-                //console.log(queue);
-            }
-                    
+                // console.log(queue);
+            }        
         }
     }
     // 输出信息，用于debug
@@ -313,7 +350,7 @@ class Anime {
         this.go_on = true;
     }
 
-    step_play() {
+    async step_play() {
         //console.log(this.index);
         if (this.index == queue.length - 1)
             return;
@@ -321,7 +358,7 @@ class Anime {
         this.index += 1;
             
         let i = this.index;
-        //console.log(this.play_time, queue[i].func);
+        console.log(this.play_time, queue[i].func);
         if (queue[i].func == "add") {
             this.wait_time = add(queue[i].para[0], queue[i].para[1], queue[i].para[2]);
             if (release) {
@@ -345,6 +382,7 @@ class Anime {
     }
 
     async auto_play() {
+        console.log(system_back);
         if (this.play_time > time) {
             // if (release) {
             //     let str = "The animation is over. The system ran for " + this.play_time + " unit time");
@@ -355,7 +393,8 @@ class Anime {
         else {
             if (this.go_on == true) {
                 await this.step_play();
-                await sleep(this.wait_time + const_time).then(() => {this.auto_play();});
+                if (this.index != queue.length - 1)
+                    await sleep(this.wait_time + const_time).then(() => {this.auto_play();});
             }
         }
     }

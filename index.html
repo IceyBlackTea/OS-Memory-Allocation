@@ -138,12 +138,12 @@
                         </h2>
                         <sapn style="margin-top:16px;display:block">the size of memory</sapn>
                         <br>
-                        <span id="size" style="margin:8px,0px,20px,0px">  <input type="text" style="height:25px;width:110px;border-radius:4px;border:1px solid #DBDBDB;" id="max_mem_size">
-                        <select id="setofmem" style="border-radius:2px;border:1px solid #DBDBDB"> 
+                        <span id="size" style="margin:8px,0px,20px,0px">  <input type="text" style="height:25px;width:110px;border-radius:4px;border:1px solid #DBDBDB;" id="max_mem_size"> MB
+                        <!-- <select id="setofmem" style="border-radius:2px;border:1px solid #DBDBDB"> 
                             <option value=1>bytes</option>
                             <option value=1024>KB</option>
                             <option value=1048576>MB</option>
-                        </select>
+                        </select> -->
                         </span>
                         <br><br>
                         <button class="btn btn-sm" type="button" style="background-color:#2ea44e; color: white;" onclick="set_up_system()">set up the system</button>
@@ -156,27 +156,26 @@
                             Set up jobs
                         </h2>
                         <br>
-                        <div id="operate" >
+                        <div id="operate" > 
                             <button  class="btn btn-sm" type="button" onclick="remove_all_jobs()" id="clean_button" style="background-color: #e34c25; color:white;">remove all jobs</button>
-                            <button class="btn btn-sm" type="button" onclick="system.run(); anime = new Anime();" style="background-color: #2ea44e; color:white; width: 105px; margin-left: 150px;">load all jobs</button>
                         </div> 
                         <br>
-                        <input style="height:25px;width:210px;border-radius:4px;border:0px solid #DBDBDB; font-size: 12px;" type="file" onchange="read_from_file()" accept="application/json" id="json_file">
+                        <input style="margin-top: 3%; height:25px;width:210px;border-radius:4px;border:0px solid #DBDBDB; font-size: 12px;" type="file" onchange="read_from_file()" accept="application/json" id="json_file">
                         <br>
                         <br>
                         <div id="unconfirmed_jobs" style="margin-top:10px;">
-                            <button class="btn btn-sm" id="manually" onclick="display_manually();">add jobs manually</button>
+                            <button style="margin-bottom: 1%;" class="btn btn-sm" id="manually" onclick="display_manually();">add jobs manually</button>
                             <div id="input" style="display: none;">
                                 <div id="input_jobs" style="display: inline;">
                                     order number
                                     <input type="number" class="job" id="order_number" style="width:107px;margin-right:5px;">
                                     size
-                                    <input type="number" style="width: 115px;" id="size" class="job">
-                                        <select style="margin-right: 3%;" id="setofjob"> 
+                                    <input type="number" style="width: 115px;" id="size" class="job"> MB
+                                        <!-- <select style="margin-right: 3%;" id="setofjob"> 
                                             <option value=1>bytes</option>
                                             <option value=1024>KB</option>
                                             <option value=1028576>MB</option>
-                                        </select>
+                                        </select> -->
                                     <br><br>
                                     in time
                                     <input type="number" class="job" id="in_time" style="margin-right:5px;">
@@ -238,12 +237,13 @@
                                     <option value="WF">WF</option>
                                 </select>
                             </sapn>
+                            <button class="btn btn-sm" id='btn-reset' type="button" onclick="load_jobs();" style="background-color: #2ea44e; color:white; width: 78px; margin-left: 80px;">set jobs</button>
                             <br>
                             <br>
                             <button class="btn btn-sm" type="button" style="width: 80px; margin-right: 5px;" onclick="anime.step_play();">step play</button>
                             <button class="btn btn-sm" type="button" style="width: 80px; margin-right: 50px;" onclick="anime.auto_play();">auto play</button>
-                            <button id="btn-pause" class="btn btn-sm" type="button" style="background-color:#79b8ff; color: white; width: 80px; margin-right: 50px;" onclick="pause();">pause</button>
-                            <button class="btn btn-sm" type="button" style="width: 60px; background-color: #e34c25; color:white; margin-right: 5px;" onclick="anime = new Anime(); set_svg(400, 400); document.getElementById('btn-pause').innerHTML = 'pause';">reset</button>
+                            <button id="btn-pause" class="btn btn-sm" type="button" style="background-color:#79b8ff; color: white; width: 70px; margin-left: 40px;" onclick="pause();">pause</button>
+                            <!-- <button class="btn btn-sm" type="button" style="width: 60px; background-color: #e34c25; color:white; margin-right: 5px;" onclick="pause(); document.getElementById('btn-pause').innerHTML = 'pause'; set_up_system(); reset_svg(400, 400, input_size); anime = new Anime();">reset</button> -->
                         </div>
                         <br><br>
                         <div id="figure">

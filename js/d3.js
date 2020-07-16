@@ -2,13 +2,15 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 00:25:16
+ * @LastEditTime: 2020-07-16 11:44:45
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
 var slot = 1000;
+var quick_slot = (2 * slot) / 5;
 var default_height = 40;
 var default_color = "#2ea44e";
+var lighter_color = "#72de8f";
 var background_color = "whitesmoke";
 var rect_x_padding = 0;
 var rect_y_padding = 3;
@@ -17,7 +19,8 @@ var text_y_padding = 25;
 var trans_padding = 10;
 
 var dataset = [];
-var parts_info = [[0, -1, default_color]];
+var parts_info = [];
+var order = 0;
 
 function svg_x_scale(length, times = 3) {
     return length * times;
@@ -29,13 +32,15 @@ function svg_y_scale(length, times = 1) {
 
 function set_svg(width, height, max_size) {
     // 定义画布
-    const svg = d3.select("body").select("#visiable_svg")
+    var svg = d3.select("body").select("#visiable_svg")
                 .attr("width", width)
                 .attr("height", height)
                 .attr("font-family", "Consolas");
                 //.attr("font-family", "Helvetica");
 
+    order = 0;
     dataset.push(max_size);
+    parts_info.push([0, -1, default_color]);
     
     var rects = svg.selectAll(".mem_rect")
                 .data(dataset)
@@ -46,7 +51,7 @@ function set_svg(width, height, max_size) {
                     return "part_" + parts_info[i][0];
                 })
                 .attr("y", (d, i)  => {
-                    return svg_y_scale(i * default_height) + rect_y_padding;
+                    return svg_y_scale(i * default_height) + i * rect_y_padding;
                 })
                 .attr("x", rect_x_padding)
                 .attr("height", svg_y_scale(default_height))
@@ -57,7 +62,7 @@ function set_svg(width, height, max_size) {
                     return parts_info[i][2];
                 })
     
-    var size_texts = svg.selectAll(".mem_text")
+    var size_texts = svg.selectAll(".mem_size_text")
                     .data(dataset)
                     .enter()
                     .append("text")
@@ -73,7 +78,59 @@ function set_svg(width, height, max_size) {
                         return svg_x_scale(parseInt(d)) + rect_x_padding + text_x_padding;
                     })
                     .attr("y", (d, i) => {
-                        return svg_y_scale(i * default_height) + rect_y_padding + text_y_padding;
+                        return svg_y_scale(i * default_height) + i * rect_y_padding + text_y_padding;
+                    })
+}
+
+async function reset_svg(width, height, max_size) {
+    d3.selectAll('.mem_rect').remove();
+    d3.selectAll('.mem_size_text').remove();
+
+    order = 0;
+    dataset = [];
+    parts_info = [];
+    dataset.push(max_size);
+    parts_info.push([0, -1, default_color]);
+
+    var svg = d3.select("body").select("#visiable_svg");
+    
+    var rects = svg.selectAll(".mem_rect")
+                .data(dataset)
+                .enter()
+                .append("rect")
+                .attr("class", "mem_rect")
+                .attr("id", (d, i)  => {
+                    return "part_" + parts_info[i][0];
+                })
+                .attr("y", (d, i)  => {
+                    return svg_y_scale(i * default_height) + i * rect_y_padding;
+                })
+                .attr("x", rect_x_padding)
+                .attr("height", svg_y_scale(default_height))
+                .attr("width", (d)  => {
+                    return svg_x_scale(d);
+                })
+                .attr("fill", (d, i) => {
+                    return parts_info[i][2];
+                })
+    
+    var size_texts = svg.selectAll(".mem_size_text")
+                    .data(dataset)
+                    .enter()
+                    .append("text")
+                    .text((d, i) => {
+                        return d;
+                    })
+                    .attr("class", "mem_size_text")
+                    .attr("id", (d, i) => {
+                        return "size_" + parts_info[i][0];
+                    })
+                    .attr("x", (d, i) => {
+                        let r = d3.select("#part_" + parts_info[i][0]);
+                        return svg_x_scale(parseInt(d)) + rect_x_padding + text_x_padding;
+                    })
+                    .attr("y", (d, i) => {
+                        return svg_y_scale(i * default_height) + i * rect_y_padding + text_y_padding;
                     })
 }
 
@@ -83,14 +140,28 @@ function add(index, part_number, job_info){
         parts_info[index][1] = job_info[0];
         d3.select("#part_" + parts_info[index][0])
         .transition()
+        .duration(quick_slot)
+        .attr("fill", lighter_color)
+        .transition()
+        .duration(quick_slot)
+        .transition()
+        .attr("fill", default_color)
+        .transition()
+        .duration(quick_slot)
+        .attr("fill", lighter_color)
+        .transition()
+        .duration(quick_slot)
+        .attr("fill", default_color)
+        .transition()
+        .delay(quick_slot)
         .duration(slot)
         .attr("fill", job_info[2]);
-        return;
+        return 3 * slot;
     }
-        
+
     d3.selectAll(".mem_rect")
     .transition()
-    .delay(slot)
+    .delay(slot * 3)
     .duration(slot)
     .attr("y", (d, i) => {
         let y = d3.select("#part_" + parts_info[i][0]).attr("y");
@@ -102,7 +173,7 @@ function add(index, part_number, job_info){
 
     d3.selectAll(".mem_size_text")
     .transition()
-    .delay(slot)
+    .delay(slot * 3)
     .duration(slot)
     .attr("y", (d, i) => {
         let y = d3.select("#part_" + parts_info[i][0]).attr("y");
@@ -125,13 +196,33 @@ function add(index, part_number, job_info){
     parts_info[index][2] = job_info[2];
     parts_info.splice(index + 1, 0, [part_number, -1, default_color]);
 
-    orignal.attr("width", orignal_width - svg_x_scale(size))
+    orignal
     .transition()
-    .duration(slot)
-    .attr("fill", parts_info[index][2]);
-
+    .duration(quick_slot)
+    .attr("fill", lighter_color)
+    .transition()
+    .duration(quick_slot)
+    .transition()
+    .attr("fill", default_color)
+    .transition()
+    .duration(quick_slot)
+    .attr("fill", lighter_color)
+    .transition()
+    .duration(quick_slot)
+    .attr("fill", default_color)
+    
+    setTimeout(() => {
+        orignal
+        .attr("fill", default_color)
+        .attr("width", orignal_width - svg_x_scale(size))
+        .transition()
+        .duration(slot)
+        .attr("fill", parts_info[index][2]);
+    }, slot * 2);
+    
     d3.select("#size_" + parts_info[index][0])
     .transition()
+    .delay(slot * 2)
     .duration(slot)
     .attr("x", orignal_width + orignal_x + text_x_padding + trans_padding)
     .transition()
@@ -150,13 +241,16 @@ function add(index, part_number, job_info){
     //.append("rect")
     //.insert("rect", "#part_" + parts_info[index+2][0])
     .insert("rect", "#size_" + parts_info[index][0])
+    .transition()
+    .delay(slot * 2)
+    .duration(0)
     .attr("fill", default_color)
     .attr("class", "mem_rect")
     .attr("id", "part_" + parts_info[index+1][0])
     .attr("y", orignal_y)
     .attr("x", orignal_width + orignal_x - svg_x_scale(size))
     .attr("height", orignal_height)
-    .attr("width", svg_x_scale(size))
+    .attr("width", svg_x_scale(size)) //???
     .transition()
     .duration(slot)
     .attr("x", orignal_width + orignal_x - svg_x_scale(size) + trans_padding)
@@ -173,6 +267,9 @@ function add(index, part_number, job_info){
     .enter()
     //.insert("text", "#size_" + parts_info[index+2][0])
     .append("text")
+    .transition()
+    .delay(slot * 2)
+    .duration(0)
     .text(size)
     .attr("class", "mem_size_text")
     .attr("id", "size_" + parts_info[index+1][0])
@@ -185,7 +282,7 @@ function add(index, part_number, job_info){
     .attr("x", orignal_x + svg_x_scale(size) + text_x_padding)
     .attr("fill", "black");
 
-    return slot * 3;
+    return slot * 5;
 }
 
 function finish(index) {
@@ -198,39 +295,33 @@ function finish(index) {
     return slot * 1;
 }
 
-function merge(index){
+function merge(index) {
     let orignal = d3.select("#part_" + parts_info[index][0]);
 
     let orignal_width = parseInt(orignal.attr("width"));
     let orignal_height = parseInt(orignal.attr("height"));
     let orignal_x = parseInt(orignal.attr("x"));
     let orignal_y = parseInt(orignal.attr("y"));
-    
-    d3.selectAll(".mem_rect")
-    .transition()
-    .delay(slot)
-    .duration(slot)
-    .attr("y", (d, i) => {
-        let y = d3.select("#part_" + parts_info[i][0]).attr("y");
-        if (i > index)
-            return parseInt(y) - svg_y_scale(default_height) - rect_y_padding;
-        else
-            return parseInt(y);
-    });
 
-    d3.selectAll(".mem_size_text")
-    .transition()
-    .delay(slot)
-    .duration(slot)
-    .attr("y", (d, i) => {  
-        let y = d3.select("#part_" + parts_info[i][0]).attr("y");
-        if (i > index)
-            return parseInt(y) - svg_y_scale(default_height) - rect_y_padding + text_y_padding;
-        else
-            return parseInt(y) + text_y_padding;
-    });
+    for (let i = index + 1; i < parts_info.length; i++) {
+        let y = d3.select("#part_" + parts_info[i][0]).attr("y")
+        d3.select("#part_" + parts_info[i][0])
+        .transition()
+        .delay(slot)
+        .duration(slot)
+        // .attr("y", 1000)
+        .attr("y", parseInt(y) - svg_y_scale(default_height) - rect_y_padding);
+            
+        d3.select("#size_" + parts_info[i][0])
+        .transition()
+        .delay(slot)
+        .duration(slot)
+        .attr("y", 1000)
+        .attr("y", parseInt(y) - svg_y_scale(default_height) - rect_y_padding + text_y_padding); 
+    }
 
-    orignal.transition()
+    orignal.attr("y", orignal_y)
+    .transition()
     .delay(slot * 2)
     .duration(slot)
     .attr("fill", default_color)
@@ -248,6 +339,9 @@ function merge(index){
     .transition()
     .duration(slot)
     .attr("x", orignal_width + orignal_x)
+    // .attr("fill", background_color)
+    // .transition()
+    // .duration(1)
     .remove();
 
     d3.select("#size_" + parts_info[index][0])
@@ -268,6 +362,8 @@ function merge(index){
     .duration(slot)
     .attr("fill", background_color)
     .attr("x", orignal_width + orignal_x + svg_x_scale(dataset[index + 1]) + text_x_padding + trans_padding)
+    // .transition()
+    // .duration(1)
     .remove();
 
     dataset[index] += dataset[index+1];
@@ -275,7 +371,7 @@ function merge(index){
     parts_info[index][1] = -1;
     parts_info.splice(index + 1, 1);
 
-    d3.selectAll(".mem_rect").data(dataset);
+    // d3.selectAll(".mem_rect").data(dataset);
 
     return slot * 3;
 }
