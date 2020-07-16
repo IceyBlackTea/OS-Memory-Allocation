@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 21:50:50
+ * @LastEditTime: 2020-07-16 21:30:44
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -242,21 +242,8 @@ class Memory {
         this.used_size += job.size;
         this.max_order_number += 1;
 
-        function color16(){//十六进制颜色随机
-			var r = Math.floor(Math.random()*256);
-			var g = Math.floor(Math.random()*256);
-			var b = Math.floor(Math.random()*256);
-			var color = '#'+r.toString(16)+g.toString(16)+b.toString(16);
-            return color;
-        }
-
-        let color = "#2ea44e";
-        while (color == "#2ea44e" || color == "#72de8f") {
-            color = color16();
-        }
-        
         //console.log("add " + part_num);
-        queue.push({"time": time, "func": "add", "para" : [part_num, this.max_order_number, [job.order_number, job.size, color]]});
+        queue.push({"time": time, "func": "add", "para" : [part_num, this.max_order_number, [job.order_number, job.size, "#79b8ff"]]});
         //console.log(queue);
     }
 

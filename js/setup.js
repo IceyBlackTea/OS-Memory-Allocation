@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 21:44:02
+ * @LastEditTime: 2020-07-16 21:28:31
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -140,11 +140,9 @@ function pause() {
     anime.go_on = !anime.go_on;
     let btn = document.getElementById("btn-pause");
     if (btn.innerHTML == "pause") {
-        btn.style = "background-color:#f9c513; color: white; width: 70px; margin-left: 48px;"
         btn.innerHTML = "resume";
     } 
     else {
-        btn.style = "background-color:#79b8ff; color: white; width: 70px; margin-left: 48px;"
         btn.innerHTML = "pause";
     }
     anime.auto_play();
@@ -160,7 +158,7 @@ async function load_jobs() {
            }
         }
         document.getElementById('btn-reset').innerHTML = 'reset jobs';
-        document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 40px;';
+        document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 80px;';
         document.getElementById('btn-pause').innerHTML = 'pause'; 
         
         let str = "The system has been set up.<br>" +
