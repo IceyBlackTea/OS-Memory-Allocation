@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 21:19:33
+ * @LastEditTime: 2020-07-16 21:30:44
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -32,6 +32,7 @@ class System {
     // 添加作业到作业队列
     add_job(job) {
         if (job.size > system.memory.size) {
+            console.log(job);
             alert('The size of the job ' + job.order_number +' is too big!');
             return false;
         }
@@ -65,8 +66,6 @@ class System {
     run() {
         if (this.wait_jobs.length == 0)
             return;
-
-        remove_all_jobs_display();   
         
         time = -1;
         queue.length = 0;
