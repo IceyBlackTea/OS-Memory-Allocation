@@ -3,7 +3,7 @@
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
 <<<<<<< HEAD
- * @LastEditTime: 2020-07-16 21:28:31
+ * @LastEditTime: 2020-07-16 23:06:00
 =======
  * @LastEditTime: 2020-07-16 21:44:02
 >>>>>>> a9193e98b7e0bbed7094d504ce1e26273b69a3b6
@@ -164,11 +164,7 @@ async function load_jobs() {
            }
         }
         document.getElementById('btn-reset').innerHTML = 'reset jobs';
-<<<<<<< HEAD
-        document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 80px;';
-=======
         document.getElementById('btn-reset').style = 'width: 80px; background-color: #e34c25; color:white; margin-left: 40px;';
->>>>>>> a9193e98b7e0bbed7094d504ce1e26273b69a3b6
         document.getElementById('btn-pause').innerHTML = 'pause'; 
         
         let str = "The system has been set up.<br>" +
