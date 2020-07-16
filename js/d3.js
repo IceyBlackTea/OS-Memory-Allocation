@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:22:41
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 17:12:57
+ * @LastEditTime: 2020-07-16 19:51:25
  * @FilePath: /OS/js/d3.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -156,6 +156,16 @@ function add(index, part_number, job_info){
         .delay(quick_slot)
         .duration(slot)
         .attr("fill", job_info[2]);
+
+        d3.select("#size_" + parts_info[index][0])
+        .transition()
+        .delay(slot * 2)
+        .duration(slot/2)
+        .attr("fill", background_color)
+        .transition()
+        .duration(slot/2)
+        .attr("fill", "black")
+        .text(dataset[index] + "(job"+parts_info[index][1]+")");
         return 3 * slot;
     }
 
@@ -232,14 +242,12 @@ function add(index, part_number, job_info){
     .duration(slot)
     .attr("x", orignal_width + orignal_x - svg_x_scale(size) + text_x_padding)
     .attr("fill", "black")
-    .text(dataset[index]);
+    .text(dataset[index] + "(job"+parts_info[index][1]+")");
         
     d3.select("body").select("#visiable_svg")
     .selectAll(".mem_rect")
     .data(dataset)
     .enter()
-    //.append("rect")
-    //.insert("rect", "#part_" + parts_info[index+2][0])
     .insert("rect", "#size_" + parts_info[index][0])
     .transition()
     .delay(slot * 2)
@@ -270,7 +278,7 @@ function add(index, part_number, job_info){
     .transition()
     .delay(slot * 2)
     .duration(0)
-    .text(size)
+    .text("")
     .attr("class", "mem_size_text")
     .attr("id", "size_" + parts_info[index+1][0])
     .attr("x", orignal_width + orignal_x + trans_padding + text_x_padding)
@@ -279,6 +287,7 @@ function add(index, part_number, job_info){
     .transition()
     .delay(slot * 2)
     .duration(slot)
+    .text(size)
     .attr("x", orignal_x + svg_x_scale(size) + text_x_padding)
     .attr("fill", "black");
 
@@ -291,6 +300,15 @@ function finish(index) {
     .transition()
     .duration(slot)
     .attr("fill", default_color);
+
+    d3.select("#size_" + parts_info[index][0])
+    .transition()
+    .duration(slot/2)
+    .attr("fill", background_color)
+    .transition()
+    .duration(slot/2)
+    .text(dataset[index])
+    .attr("fill", "black");
 
     return slot * 2;
 }
@@ -309,14 +327,12 @@ function merge(index) {
         .transition()
         .delay(slot)
         .duration(slot)
-        // .attr("y", 1000)
         .attr("y", parseInt(y) - svg_y_scale(default_height) - rect_y_padding);
             
         d3.select("#size_" + parts_info[i][0])
         .transition()
         .delay(slot)
         .duration(slot)
-        .attr("y", 1000)
         .attr("y", parseInt(y) - svg_y_scale(default_height) - rect_y_padding + text_y_padding); 
     }
 
@@ -339,9 +355,7 @@ function merge(index) {
     .transition()
     .duration(slot)
     .attr("x", orignal_width + orignal_x)
-    // .attr("fill", background_color)
-    // .transition()
-    // .duration(1)
+    //.attr("fill", background_color)
     .remove();
 
     d3.select("#size_" + parts_info[index][0])
@@ -362,8 +376,6 @@ function merge(index) {
     .duration(slot)
     .attr("fill", background_color)
     .attr("x", orignal_width + orignal_x + svg_x_scale(dataset[index + 1]) + text_x_padding + trans_padding)
-    // .transition()
-    // .duration(1)
     .remove();
 
     dataset[index] += dataset[index+1];

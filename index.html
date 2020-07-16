@@ -17,47 +17,53 @@
         border-radius:4px;
         border:1px solid #DBDBDB;
     }
-    .sidenav {
-            height: 100%;
-            width: 0; /*原始宽度*/
-            /* position: fixed; */
-            /*z-index、top、left共同控制侧栏的悬浮（上方1，下方-1）*/
-            z-index: 1;
-            top: 0;
-            right: 0px;
-            background-color:#24292e;
-            overflow-x: hidden;
-            transition: 0.5s; /*侧栏延迟0.5s显示*/
-            padding-top: 14px;
-            float: right; 
-        }
-        
-        /*侧边栏标签选择器*/
-        .sidenav a{
-            padding: 0px 0px 0px 40px;
-            text-decoration: none;
-            font-size: 20px;
-            color: #24292e;
-            display: block;
-            transition: 0.3s; /*标签延迟0.3s显示*/
-        }
-        
-        /*侧栏标签和关闭按钮光标的效果*/
-        .sidenav a:hover, .offcanvas a:focus{
-            color: #f1f1f1;
-        }
-        
-        /*侧栏的位置选择器*/
-        .sidenav{
-            position: absolute;
-            top: 0;
-            right: 0px;
-            font-size: 20px;
-            margin-right: 0px;
-        }
+
     #main {
         transition: margin-right .5s;/*主体内容延迟0.5s整体y右移动*/
         padding: 0;
+    }
+
+    /*add table css*/
+    table {
+        border-collapse: collapse;
+        width:100%
+    }
+
+    table td,
+    table th {
+        font-weight: 600;
+        padding: 4px 7px;
+        text-align: center;
+        
+    }
+
+    table td {
+        color: #575757;
+        text-align: center;
+    }
+
+    table th:first-child,
+    table td:first-child {
+        padding-left: 8px;
+        text-align: center;
+    }
+    
+    table tr.default th {
+        border: 0;
+        text-align: center;
+    }
+
+    table tr.default td {
+        border: 0;
+        text-align: center;
+    }
+
+    table tr.default:nth-child(even) {
+        background: #f2f2f2;
+    }
+
+    table tr.default:nth-child(odd)  {
+        background: #fff;
     }
     </style>
 
@@ -100,15 +106,6 @@
             var ui =document.getElementById("showtips");      
             ui.style.visibility="visible";  
         }
-
-        // setInterval(function(){
-        //         var myDate = new Date();
-        //         var x=myDate.getFullYear()+"年"+ myDate.getMonth() + 1 + "月" + myDate.getDate()+"日 "+myDate.getHours()+"点"+myDate.getMinutes()+"分"+myDate.getSeconds()+"秒";
-        //         document.getElementById("time"). innerHTML=x;
-
-        //         var One_Random = Math.random();
-        //         document.getElementById("One_Random"). innerHTML=One_Random;
-        //     },1000); 
     </script>
 
     <body>
@@ -263,24 +260,30 @@
                                 <h4 class="m-0" style="color:grey; ">  
                                     Operation Process
                                 </h4>
-                                    <div id="process" class="one-fourth column" style="height: 230px; overflow: auto; background-color: white; width: 260px; border-radius:3px;">
-                                        <div class="p-3 height-fit border" style="color: grey;">
-                                            
-                                        </div>
+                                    <div id="process" class="one-fourth column" style="height: 90%; overflow: auto; background-color: white; width: 100%; border-radius:3px;">
                                     </div>
                             </div>
                         </div>
                         <br><br>
-                        <div id="showjob" class="Box" style="width: 85%; height: 45%;margin-left:0px;">
+                        <div id="showjob" class="Box" style="overflow:auto; width: 85%; height: 45%;margin-left:0px;">
                             <div class="Box-row" style="background-color:white;  height: 100%; width: 100%;">
                                 <h4 class="m-0" style="color:grey;">
                                     Jobs added to the system
                                 </h4>
-                                    <div id="jobs" class="one-fourth column" style="height: 230px; overflow: auto; background-color: white; width: 260px; border-radius:3px;">
-                                        <div class="p-3 height-fit border" style="color: grey;">
-                                            
-                                        </div>
-                                    </div>
+                                    <table>
+                                        <thead>
+                                            <tr class="default">
+                                                <th>id</th>
+                                                <th>size</th>
+                                                <th>in at</th>
+                                                <th>run time</th>
+                                                <th>start at</th>
+                                                <th>end at</th>
+                                            </tr>
+                                        </thead>
+                                            <tbody id="jobs">
+                                            </tbody>
+                                    </table>
                             </div>
                         </div>
                     <!-- </div> -->

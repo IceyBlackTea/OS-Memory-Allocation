@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-14 08:58:47
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 17:41:55
+ * @LastEditTime: 2020-07-16 21:00:00
  * @FilePath: /OS/js/setup.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -75,6 +75,7 @@ function read_from_file() {
                     + "Please check the file!\n";
             }
             alert("The file isn't supported!");
+            return;
         }
         if (jobs_json != undefined) {
             for (let i = 0; i < jobs_json.length; i++) {
@@ -86,7 +87,7 @@ function read_from_file() {
 
                 if(isJob(job)){
                     jobs.push(job);
-                    console.log(job);
+                    //console.log(job);
                     add_job_display(job);
                 }
                 else{
@@ -117,7 +118,8 @@ function add_a_job() {
         jobs.push(job);
     }
     else{
-        alert("invalid input.")
+        alert("Invalid input. Please check the input.")
+        return;
     }
 }
 
@@ -152,7 +154,8 @@ async function load_jobs() {
         await set_up_system();
         for (let i = 0; i < jobs.length; i++) {
            if (await system.add_job(jobs[i]) == false) {
-               alert('The job cannot be added.\nPlease check!')
+               alert('The job cannot be added.\nPlease check!');
+               return;
            }
         }
         let str = "The system has been set up.<br>" +
@@ -164,15 +167,16 @@ async function load_jobs() {
         
         add_operation_display("You can play the animation now.\n");
 
-        set_svg(400, 400, input_size);
+        set_svg(400, 600, input_size);
         anime = new Anime();        
     }
     else {
         pause();
         
-        reset_svg(400, 400, input_size);
+        reset_svg(400, 600, input_size);
         set_up_system();
         for (let i = 0; i < jobs.length; i++) {
+            console.log(jobs);
             system.add_job(jobs[i]);
         }
         let str = "The system has been reset up.<br>" +
@@ -198,6 +202,7 @@ function isNumber(obj) {
 }
 
 function isJob(job) {
+    // let max_size = document.getElementById("max_mem_size").value;
     if(job.size < 0)
         return false;
     else if(job.order_number < 0)
@@ -211,15 +216,14 @@ function isJob(job) {
 
 /*display jobs on frontpage 07/16*/
 function add_job_display(job) {
-    let str ='<div class="p-3 height-fit border" style="width:inherit;">'+'id: '+job.order_number+' size: '+job.size+' in_time: '+job.in_time+' run_time: '+job.run_time+'</div>';
     let p = document.getElementById('jobs');
+    let str='<tr class="default"><td>'+job.order_number+'</td><td>'+job.size+'</td><td>'+job.in_time+'</td><td>'+job.run_time+'</td><td>'+ "-" +"</td><td>" + "-" +"</td>";
     p.innerHTML += str;
 }
 
 function add_full_job_display(job) {
-    let str ='<div class="p-3 height-fit border" style="width:inherit;">'+'id: '+job.order_number+' size: '+job.size+' in_time: '+job.in_time+'<br>run_time: '+job.run_time +
-            ' start_time: '+ job.start_time + ' end_time: '+ job.end_time +'</div>';
     let p = document.getElementById('jobs');
+    let str='<tr class="default"><td>'+job.order_number+'</td><td>'+job.size+'</td><td>'+job.in_time+'</td><td>'+job.run_time+'</td><td>'+ job.start_time +"</td><td>" + job.end_time +"</td>";
     p.innerHTML += str;
 }
 

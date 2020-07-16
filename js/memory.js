@@ -2,7 +2,7 @@
  * @Author: One_Random
  * @Date: 2020-07-06 10:50:57
  * @LastEditors: One_Random
- * @LastEditTime: 2020-07-16 17:39:16
+ * @LastEditTime: 2020-07-16 21:19:33
  * @FilePath: /OS/js/memory.js
  * @Description: Copyright © 2020 One_Random. All rights reserved.
  */ 
@@ -31,19 +31,29 @@ class System {
 
     // 添加作业到作业队列
     add_job(job) {
-        if (job.size > system.memory.size)
+        if (job.size > system.memory.size) {
+            alert('The size of the job ' + job.order_number +' is too big!');
             return false;
+        }
+
+        if (this.wait_jobs.length == 0){
+            this.wait_jobs.push(job);
+            return true;
+        }
             
         sleep(0).then(() => {
             for (let i = 0; i < this.wait_jobs.length; i++) {
-                if (this.wait_jobs[i].in_time > job.in_time) {
-                    if (this.wait_jobs[i].order_number != job.order_number) {
-                        this.wait_jobs.splice(i, 0, job);
-                        return true;
-                    }
-                    else
-                        return false;
+                if (this.wait_jobs[i].order_number == job.order_number) {
+                    alert('The job ' + job.order_number +' has been added already!')
+                    return false;
                 }   
+            }
+            
+            for (let i = 0; i < this.wait_jobs.length; i++) {
+                if (this.wait_jobs[i].in_time > job.in_time) {
+                    this.wait_jobs.splice(i, 0, job);
+                    return true; 
+                }  
             }
 
             this.wait_jobs.push(job);
@@ -70,9 +80,9 @@ class System {
             this.finish_jobs();
             this.begin_jobs();
 
-            // console.log("time " + time);
+            console.log("time " + time);
             queue.push({"time": time, "func" : "pass"});
-            // console.log(queue);
+            console.log(queue);
         }
     }
 
@@ -86,7 +96,7 @@ class System {
     // 处理完成的作业
     finish_jobs() {
         // 遍历寻找完成的作业
-        // console.log("running", time, this.running_jobs);
+        console.log("running", time, this.running_jobs);
         let time_ = time;
         for (let i = 0; i < this.running_jobs.length; i++) {
             let job = this.running_jobs[i];
@@ -115,7 +125,7 @@ class System {
                 break;
         
             let job = this.wait_jobs[0];
-            // console.log('begin jobs', time, job);
+            console.log('begin jobs', time, job);
             if (job.in_time <= time) {
                 let part_num = -1;
                 if (this.type == 'FF')
@@ -134,6 +144,8 @@ class System {
                     this.wait_jobs.splice(0, 1);
                     this.running_jobs.push(job);
                 }
+                else
+                    break;
             }
             else
                 break;
@@ -244,10 +256,11 @@ class Memory {
                 if (this.parts[i].job_num == end_jobs[j].order_number) {
                     this.used_size -= this.parts[i].size;
                     this.parts[i].job_num = -1;
-                    end_jobs.splice(j, 1);
+
                     // console.log("finish " + i);
-                    queue.push({"time": time, "func" : "finish", "para":[i]});
+                    queue.push({"time": time, "func" : "finish", "para":[i, end_jobs[j].order_number]});
                     // console.log(queue);
+                    end_jobs.splice(j, 1);
                     break;
                 }
         }
@@ -331,23 +344,23 @@ class Anime {
         if (queue[i].func == "add") {
             this.wait_time = add(queue[i].para[0], queue[i].para[1], queue[i].para[2]);
             let str =   "Select Part" + queue[i].para[1] + "<br>" + 
-                        "The job start to run:<br>" +
-                        "No.     " + queue[i].para[2][0] + "<br>" +
-                        "Size:   " + queue[i].para[2][1] + "<br>";
+                        "The job start to run: " +
+                        "No.     " + queue[i].para[2][0] + " " +
+                        "Size:   " + queue[i].para[2][1];
                         // "Color: " + queue[i].para[2] + "<br>";
                         
             add_operation_display(str);
         }
         else if (queue[i].func == "finish") {
-            let str = "The job at part " + queue[i].para[0] + " finished.<br>";
+            let str = "The job " + queue[i].para[1] +" at part " + queue[i].para[0] + " finished.<br>";
                         
             add_operation_display(str);
             this.wait_time = finish(queue[i].para[0]);
         }
         else if (queue[i].func == "merge") {
             let str = "Merge two parts:<br>" +
-                        "Part " + queue[i].para[0] + "<br>" +
-                        "Part " + parseInt(queue[i].para[0] + 1) + "<br>" ;
+                        "part " + queue[i].para[0] + " and " +
+                        "part " + parseInt(queue[i].para[0] + 1) + "<br>" ;
                         
             add_operation_display(str);
             this.wait_time = merge(queue[i].para[0]);
@@ -364,7 +377,7 @@ class Anime {
 
     async auto_play() {
         if (this.play_time > time) {
-            let str = "The animation is over.";
+            let str = "The animation is over.<br>It took " + this.play_time + " time slices to show the process.";
                         
             add_operation_display(str);
             
@@ -377,7 +390,7 @@ class Anime {
                     await sleep(this.wait_time + const_time).then(() => {this.auto_play();});
                 }
                 else {
-                    let str = "The animation is over.";
+                    let str = "The animation is over.<br>It took " + this.play_time + " time slices to show the process.";
                         
                     add_operation_display(str);
                 }
